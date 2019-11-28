@@ -76,49 +76,71 @@ def get_teams(ids=None):
         return metro, atlantic, central, pacific
     
 def get_standings():
-    #response = requests.get("{}/standings".format(BASE)).json()
-#    with open('standings.json', 'w') as json_file:
-#        json.dump(response, json_file, sort_keys=True, indent=4)
     with open('standings.json', 'r') as json_file:
         response = json.load(json_file)
     result = parse.parse_standings(response)
     return result
 
-# TODO: Gets the player Ids for a given team in a pandas DataFrame and writes it into a csv file
-def get_player_ids_from_team(team_id):
-    #print("{}/player/byTeam/{}".format(RECORDS_BASE, team_id))
-    
+# Gets the player Ids and their name for a given team in a pandas DataFrame and writes it into a csv file
+def get_player_ids_from_team(team_id):    
     
     #TESTING PURPOSES -----------------------------
-    with open('test_players.json', 'r') as json_file:
+    with open('test_roster.json', 'r') as json_file:
         response = json.load(json_file)
-        print(response['data'][0]['id'])
+        #print(response['data'][0]['id'])
         #response = response.json()
         result = parse.parse_player_ids(response)
-        result.to_csv("resources/{}_players.csv".format(team_id))
+        result.to_csv("test_players.csv".format(team_id))
 #       json.dump(response, json_file, sort_keys=True, indent=4)
         return result
     
     #----------------------------------------------
+    
+#    response = requests.get("{}/teams/{}/roster".format(BASE, team_id))
+#    print(response.status_code)
+#    if (response.status_code == 200):
+#        response = response.json()
+#        result = parse.parse_player_ids(response)
+#        result.to_csv("resources/player_ids/{}_players.csv".format(team_id))
+#        return result
+#    else:
+#        return None
+    
     
 #    response = requests.get("{}/player/byTeam/{}".format(RECORDS_BASE, team_id))
 #    print(response.status_code)
 #    if (response.status_code == 200):
 #        response = response.json()
 #        result = parse.parse_player_ids(response)
-#        with open("{}_players.csv".format(team_id), 'w') as csv_file:
-#            result.to_csv("../resources/{}".format(csv_file))
-##            json.dump(response, json_file, sort_keys=True, indent=4)
+#        result.to_csv("resources/player_ids/{}_players.csv".format(team_id))
 #        return result
 #    else:
 #        return None
 
 
 # TODO: Gets the stats for a player
-def get_player_stats(teamId):
-#    response = requests.get("{}/player/byTeam/{}".format(RECORDS_BASE, teamId)).json()
+def get_player_stats(player_id):
+#    response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season=20192020".format(BASE, player_id))
+#    print(response.status_code)
+#    if response.status_code == 200:
+#        response = response.json()
+#        
+        # Parse the data to include only stats that we want
+    response = None
+    parse.parse_player_stats(response)
+    return None
+    # Request stats for a specific player from the NHL API
+#    response = requests.get("{}/people/{}/stats".format(BASE, player_id))
+#    if response.status_code == 200:
+#        response = response.json()
+        # Parse the data to include only stats that we want
+#        result = parse.parse_player_stats(response)
+        # Write the result to csv file
+#        result.to_csv("resources/player_stats/{}.csv".format(player_id))
+#        return result
 #    with open('{}.json'.format(teamId), 'w') as json_file:
 #        json.dump(response, json_file, sort_keys=True, indent=4)
-    return None
+#        else: 
+#            return None
 
 # TODO: Gets stats for a player year by year Modifier: ?stats=yearByYear

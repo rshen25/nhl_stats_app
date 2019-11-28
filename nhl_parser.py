@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas.io.json import json_normalize
+import json
 
 TEAM_STATS_WANTED = ['team.name', 'stat.gamesPlayed', 'stat.wins', 'stat.losses', 'stat.ot',
                 'stat.pts', 'stat.goalsPerGame', 'stat.goalsAgainstPerGame', 
@@ -8,6 +9,20 @@ TEAM_STATS_WANTED = ['team.name', 'stat.gamesPlayed', 'stat.wins', 'stat.losses'
 STANDING_STATS_WANTED = ['team.id', 'team.name', 'gamesPlayed', 'leagueRecord.wins', 'leagueRecord.losses', 
                          'leagueRecord.ot', 'points', 'regulationWins', 'row',
                          'goalsScored', 'goalsAgainst', 'goalDiff', 'streak.streakCode']
+
+PLAYER_STATS_WANTED = ['stat.games', 'stat.goals', 'stat.assists', 'stat.points', 'stat.plusMinus',
+                       'stat.pim', 'stat.powerPlayGoals', 'stat.powerPlayPoints', 'stat.shortHandedGoals',
+                       'stat.shortHandedPoints', 'stat.gameWinningGoals', 'stat.overTimeGoals', 
+                       'stat.shots', 'stat.shotPct', 'stat.blocked', 'stat.faceOffPct', 'stat.hits']
+
+
+team_cols = ['Team_ID', 'Team_Name', 'Abbrv', 'Games_Played', 'Wins', 'Losses', 'OT',
+             'Points', 'GPG', 'GAPG', 'PP%', 'PK%']
+
+player_cols = ['Player_ID', 'Team_ID', 'Team_Name', 'Full_Name', 'Age', 'Games_Played', 
+               'Goals', 'Assists', 'Points', '+/-', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
+               'GWG', 'OTG', 'S' , 'S%', 'Blk', 'FO%', 'Hits']
+
 
 # Removes unnecessary columns and returns every team in the NHL and their season stats
 def parse_teams(json_data):
@@ -69,14 +84,38 @@ def get_standing_stats(division_json):
         standings = standings.append(tmp, ignore_index=True)
     return standings
 
-# TODO: Given a json data of all players within a team, get all player ids
+# Given a json data of all players within a team, get all player ids within the team
 def parse_player_ids(team_player_data):
+#    player_ids = []
+#    for k in team_player_data['data']:
+#        player_ids.append(k['id'])
+#    player_ids = pd.DataFrame(player_ids)
+#    return player_ids
+    del team_player_data['copyright']
     player_ids = []
-    for k in team_player_data['data']:
-        player_ids.append(k['id'])
-    player_ids = pd.DataFrame(player_ids)
-    return player_ids
+    player_names = []
+    for k in team_player_data['roster']:
+        player_ids.append(k['person']['id'])
+        player_names.append(k['person']['fullName'])
+    player_data = {'playerIDs': player_ids, 'playerNames': player_names}
+    result = pd.DataFrame(player_data, columns=['playerIDs', 'playerNames'])
+    return result
 
-# TODO: Given the json data for a player, filter out unwanted stats
-def parse_player_stats(json_data):
-    return None
+
+# TODO: Given the json data for a player, filter out unwanted stats and return in pandas Dataframe
+def parse_player_stats(player_data):
+#    del player_data['copyright']
+#    result = pd.DataFrame()
+#    for k in player_data['splits']:
+    
+    # Testing ------------------------------------------
+    with open('test_stats.json', 'r') as json_file:
+        stats = json.load(json_file)
+        player_data = json_normalize(stats['stats'][0]['splits'])
+        print(player_data)
+        result = player_data[PLAYER_STATS_WANTED].copy()
+#        result.to_csv('test_stats.csv')
+#        result = pd.read_json(player_data)
+#    result = pd.read_json(player_data['stats']['splits'])
+#    print (result)
+    return result

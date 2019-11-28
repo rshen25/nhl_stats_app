@@ -1,0 +1,6 @@
+*.csv
+*.json
+resources/
+__pycache__/
+*.txt
+*.db
