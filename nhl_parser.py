@@ -2,22 +2,32 @@ import pandas as pd
 from pandas.io.json import json_normalize
 import json
 
-TEAM_STATS_WANTED = ['team.name', 'stat.gamesPlayed', 'stat.wins', 'stat.losses', 'stat.ot',
+TEAM_STATS_WANTED = ['team.id', 'team.name', 'stat.gamesPlayed', 'stat.wins', 'stat.losses', 'stat.ot',
                 'stat.pts', 'stat.goalsPerGame', 'stat.goalsAgainstPerGame', 
                 'stat.powerPlayPercentage', 'stat.penaltyKillPercentage']
 
-STANDING_STATS_WANTED = ['team.id', 'team.name', 'gamesPlayed', 'leagueRecord.wins', 'leagueRecord.losses', 
-                         'leagueRecord.ot', 'points', 'regulationWins', 'row',
+TEAM_STATS_RENAMED = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
+             'Points', 'GPG', 'GAPG', 'PP%', 'PK%']
+
+
+STANDING_STATS_WANTED = ['team.id', 'team.name', 'regulationWins', 'row',
                          'goalsScored', 'goalsAgainst', 'goalDiff', 'streak.streakCode']
+
+STANDINGS_STATS_RENAMED = ['Team_ID', 'Team_Name', 'Regulation_Wins', 'ROW', 'Goals_Scored', 
+                           'Goals_Against' , 'Goal_Diff' , 'Streak']
 
 PLAYER_STATS_WANTED = ['stat.games', 'stat.goals', 'stat.assists', 'stat.points', 'stat.plusMinus',
                        'stat.pim', 'stat.powerPlayGoals', 'stat.powerPlayPoints', 'stat.shortHandedGoals',
                        'stat.shortHandedPoints', 'stat.gameWinningGoals', 'stat.overTimeGoals', 
                        'stat.shots', 'stat.shotPct', 'stat.blocked', 'stat.faceOffPct', 'stat.hits']
 
+PLAYER_STATS_RENAMED = ['Player_ID', 'Team_ID', 'Team_Name', 'Full_Name', 'Age', 'Games_Played', 
+               'Goals', 'Assists', 'Points', '+/-', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
+               'GWG', 'OTG', 'S' , 'S%', 'Blk', 'FO%', 'Hits']
 
-team_cols = ['Team_ID', 'Team_Name', 'Abbrv', 'Games_Played', 'Wins', 'Losses', 'OT',
-             'Points', 'GPG', 'GAPG', 'PP%', 'PK%']
+team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
+             'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
+             'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP%', 'PK%', 'Conference', 'Division']
 
 player_cols = ['Player_ID', 'Team_ID', 'Team_Name', 'Full_Name', 'Age', 'Games_Played', 
                'Goals', 'Assists', 'Points', '+/-', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
@@ -46,22 +56,26 @@ def parse_teams(json_data):
     # Get only columns/stats that we want
     team_stats = team_stats[TEAM_STATS_WANTED].copy()
     
+    # Rename the columns
+    team_stats.columns = TEAM_STATS_RENAMED
+    
     # Add conference/division column to results
-    team_stats['conference'] = conference['name']
-    team_stats['division'] = division['name']
+    team_stats['Conference'] = conference['name']
+    team_stats['Division'] = division['name']
     
     return team_stats
 
-# Parses the standings data to only keep the stats that we want and separates them into their
-# respective divisions
+# Parses the standings data to only keep the stats that we want
 def parse_standings(json_data):
     del json_data['copyright']
     
+    # Normalize the json data and separate the standings based on division
     metro = json_normalize(json_data['records'][0]['teamRecords'])
     atlantic = json_normalize(json_data['records'][1]['teamRecords'])
     central = json_normalize(json_data['records'][2]['teamRecords'])
     pacific = json_normalize(json_data['records'][3]['teamRecords'])
     
+    # Calculate the goal differential for each team and filter 
     metro = calculate_goal_difference(metro)
     metro = metro[STANDING_STATS_WANTED].copy()
     atlantic = calculate_goal_difference(atlantic)
@@ -71,7 +85,15 @@ def parse_standings(json_data):
     pacific = calculate_goal_difference(pacific)
     pacific = pacific[STANDING_STATS_WANTED].copy()
     
-    return metro, atlantic, central, pacific
+    # Rename the columns to math the database
+    metro.columns = STANDINGS_STATS_RENAMED
+    atlantic.columns = STANDINGS_STATS_RENAMED
+    central.columns = STANDINGS_STATS_RENAMED
+    pacific.columns = STANDINGS_STATS_RENAMED
+    
+    result = pd.concat([metro, atlantic, central, pacific], ignore_index=True)
+    
+    return result
 
 def calculate_goal_difference(df):
     df['goalDiff'] = df['goalsScored'] - df['goalsAgainst']
@@ -102,20 +124,19 @@ def parse_player_ids(team_player_data):
     return result
 
 
-# TODO: Given the json data for a player, filter out unwanted stats and return in pandas Dataframe
-def parse_player_stats(player_data):
-#    del player_data['copyright']
-#    result = pd.DataFrame()
-#    for k in player_data['splits']:
-    
+# Given the json data for a player, filter out unwanted stats and return in pandas Dataframe
+def parse_player_stats(player_data):    
     # Testing ------------------------------------------
-    with open('test_stats.json', 'r') as json_file:
-        stats = json.load(json_file)
-        player_data = json_normalize(stats['stats'][0]['splits'])
-        print(player_data)
-        result = player_data[PLAYER_STATS_WANTED].copy()
-#        result.to_csv('test_stats.csv')
-#        result = pd.read_json(player_data)
+#    with open('test_stats.json', 'r') as json_file:
+#        stats = json.load(json_file)
+#        player_data = json_normalize(stats['stats'][0]['splits'])
+#        print(player_data)
+    # --------------------------------------------------
+    
+    player_stats = json_normalize(player_data['stats'][0]['splits'])
+    result = player_stats[PLAYER_STATS_WANTED].copy()
+    result.columns = PLAYER_STATS_RENAMED
+    result.to_csv('test_stats.csv')
 #    result = pd.read_json(player_data['stats']['splits'])
 #    print (result)
     return result

@@ -58,28 +58,45 @@ def get_team(id):
     return result
 
 
-# Gets all the teams in the NHL and their current season stats
-def get_teams(ids=None):
-    if isinstance(ids, list):
-        suffix = ",".join(map(str, ids))
-        result = requests.get("{}/teams/?teamId={}?expand=team.stats".format(BASE, suffix)).json()
-        #result = json.dumps(result, sort_keys=True, indent=4)
-        result = pd.read_json(path_or_buf=result, orient='records')
-        return result
-
-    else:
+## Gets all the teams in the NHL and their current season stats
+#def get_teams(ids=None):
+#    if isinstance(ids, list):
+##        suffix = ",".join(map(str, ids))
+##        result = requests.get("{}/teams/?teamId={}?expand=team.stats".format(BASE, suffix)).json()
+#        #result = json.dumps(result, sort_keys=True, indent=4)
+##        result = pd.read_json(path_or_buf=result, orient='records')
+#        result = None
+#        return result
+#
+#    else:
+#        #for testing purposes we will just use the file
+#        #result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
+#        with open('data.json', 'r') as json_file:
+#            result = json.load(json_file)
+#        result = parse.parse_teams(result)
+#        return result
+    
+def get_all_team_stats():
         #for testing purposes we will just use the file
-        #result = requests.get("{}/teams/{}?expand=team.stats".format(BASE, "")).json()
+        #result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
         with open('data.json', 'r') as json_file:
             result = json.load(json_file)
-        metro, atlantic, central, pacific = parse.parse_teams(result)
-        return metro, atlantic, central, pacific
+        result = parse.parse_teams(result)
+        return result
     
 def get_standings():
+    # https://statsapi.web.nhl.com/api/v1/teams/?expand=team.stats
+#    response = requests.get("{}/standings".format(BASE))
+#    if response.status_code == 200:
+#        response = response.json()
+#        result = parse.parse_standings(response)
+    
+    # TESTING --------------------------
     with open('standings.json', 'r') as json_file:
         response = json.load(json_file)
-    result = parse.parse_standings(response)
-    return result
+        result = parse.parse_standings(response)
+    # -------------------------------------
+        return result
 
 # Gets the player Ids and their name for a given team in a pandas DataFrame and writes it into a csv file
 def get_player_ids_from_team(team_id):    
@@ -118,17 +135,22 @@ def get_player_ids_from_team(team_id):
 #        return None
 
 
-# TODO: Gets the stats for a player
+# Gets the stats for a player via the NHL API, parses it so that it contains desired statistics
+# and returns in a pandas DataFrame
 def get_player_stats(player_id):
-#    response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season=20192020".format(BASE, player_id))
-#    print(response.status_code)
-#    if response.status_code == 200:
-#        response = response.json()
-#        
+    response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season=20192020".format(BASE, player_id))
+    print(response.status_code)
+    if response.status_code == 200:
+        response = response.json()
         # Parse the data to include only stats that we want
-    response = None
-    parse.parse_player_stats(response)
-    return None
+        result = parse.parse_player_stats(response)
+        return result
+    
+    # TESTING ----------------------------
+    
+    
+    # ------------------------------------
+    
     # Request stats for a specific player from the NHL API
 #    response = requests.get("{}/people/{}/stats".format(BASE, player_id))
 #    if response.status_code == 200:
@@ -142,5 +164,3 @@ def get_player_stats(player_id):
 #        json.dump(response, json_file, sort_keys=True, indent=4)
 #        else: 
 #            return None
-
-# TODO: Gets stats for a player year by year Modifier: ?stats=yearByYear
