@@ -50,7 +50,7 @@ def get_player(id):
 
 def get_players(ids):
     result = requests.get("{}/people/".format(BASE)).json()
-    result = pd.read_json(result)
+#    result = pd.read_json(result)
     return result
 
 def get_team(id):
@@ -137,17 +137,29 @@ def get_player_ids_from_team(team_id):
 
 # Gets the stats for a player via the NHL API, parses it so that it contains desired statistics
 # and returns in a pandas DataFrame
-def get_player_stats(player_id):
-    response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season=20192020".format(BASE, player_id))
-    print(response.status_code)
+def get_player_stats(player_id, season):
+    
+    response = requests.get("{}/people/{}".format(BASE, player_id))
     if response.status_code == 200:
-        response = response.json()
+        player_data = response.json()
+    
+    response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season={}".format(BASE, player_id, season))
+#    print(response.status_code)
+    if response.status_code == 200:
+        player_stats = response.json()
         # Parse the data to include only stats that we want
-        result = parse.parse_player_stats(response)
-        return result
+        result = parse.parse_player_stats(player_data, player_stats)
+    return result
     
     # TESTING ----------------------------
-    
+#    with open('test_player_data.json', 'r') as data_file:
+#        player_data = json.load(data_file)
+#        
+#    with open('test_player_stats.json', 'r') as stats_file:
+#        player_stats = json.load(stats_file)
+#        
+#    result = parse.parse_player_stats(player_data, player_stats)
+#    return result
     
     # ------------------------------------
     

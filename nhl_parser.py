@@ -7,7 +7,7 @@ TEAM_STATS_WANTED = ['team.id', 'team.name', 'stat.gamesPlayed', 'stat.wins', 's
                 'stat.powerPlayPercentage', 'stat.penaltyKillPercentage']
 
 TEAM_STATS_RENAMED = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
-             'Points', 'GPG', 'GAPG', 'PP%', 'PK%']
+             'Points', 'GPG', 'GAPG', 'PP_Percent', 'PK_Percent']
 
 
 STANDING_STATS_WANTED = ['team.id', 'team.name', 'regulationWins', 'row',
@@ -21,17 +21,22 @@ PLAYER_STATS_WANTED = ['stat.games', 'stat.goals', 'stat.assists', 'stat.points'
                        'stat.shortHandedPoints', 'stat.gameWinningGoals', 'stat.overTimeGoals', 
                        'stat.shots', 'stat.shotPct', 'stat.blocked', 'stat.faceOffPct', 'stat.hits']
 
-PLAYER_STATS_RENAMED = ['Player_ID', 'Team_ID', 'Team_Name', 'Full_Name', 'Age', 'Games_Played', 
-               'Goals', 'Assists', 'Points', '+/-', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
-               'GWG', 'OTG', 'S' , 'S%', 'Blk', 'FO%', 'Hits']
+PLAYER_DATA_WANTED = ['id', 'fullName', 'currentTeam.id', 'currentTeam.name', 'currentAge',
+                      'height', 'weight', 'birthCountry', 'primaryNumber', 
+                       'shootsCatches', 'primaryPosition.code']
+
+PLAYER_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
+                        'Weight', 'Country', 'Number', 'Shoots', 'Position', 'Games_Played',
+                        'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
+                        'GWG', 'OTG', 'S' , 'Shot_Percent', 'Blk', 'FO_Percent', 'Hits']
 
 team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
              'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
-             'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP%', 'PK%', 'Conference', 'Division']
+             'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP_Percent', 'PK_Percent', 'Conference', 'Division']
 
-player_cols = ['Player_ID', 'Team_ID', 'Team_Name', 'Full_Name', 'Age', 'Games_Played', 
-               'Goals', 'Assists', 'Points', '+/-', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
-               'GWG', 'OTG', 'S' , 'S%', 'Blk', 'FO%', 'Hits']
+player_cols = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height', 'Weight', 'Country', 'Number',
+               'Shoots', 'Position', 'Games_Played', 'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM',
+               'PPG', 'PPP', 'SHG', 'SHP', 'GWG', 'OTG', 'S' , 'Shot_Percent', 'Blk', 'FO_Percent', 'Hits']
 
 
 # Removes unnecessary columns and returns every team in the NHL and their season stats
@@ -123,20 +128,44 @@ def parse_player_ids(team_player_data):
     result = pd.DataFrame(player_data, columns=['playerIDs', 'playerNames'])
     return result
 
-
 # Given the json data for a player, filter out unwanted stats and return in pandas Dataframe
-def parse_player_stats(player_data):    
+def parse_player_stats(player_data, player_stats):    
+    # Get normalize the json data into pandas DataFrames
+    player_stats = json_normalize(player_stats['stats'][0]['splits'])
+    player_data = json_normalize(player_data['people'])
+    
+#    print(player_stats)
+#    print(player_data)
+    
+    # Filter out the stats that we do not want
+    try:
+        if len(player_stats.columns) > 0:
+            player_stats = player_stats[PLAYER_STATS_WANTED].copy()
+        else:
+            player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
+    except KeyError as e:
+        player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
+        print(e)
+        
+    try:        
+        if len(player_stats.columns) > 0:
+            player_data = player_data[PLAYER_DATA_WANTED].copy()
+        else:
+            player_stats = pd.DataFrame(columns=PLAYER_DATA_WANTED)
+    except KeyError as e:
+        player_stats = pd.DataFrame(columns=PLAYER_DATA_WANTED)
+        print(e)
+    
+    
+    # Merge the player data and statistic DataFrames
+    result = player_data.merge(player_stats, left_index=True, right_index=True)
+    
+    # Rename the column names to match the database
+    result.columns = PLAYER_STATS_RENAMED
+    
     # Testing ------------------------------------------
-#    with open('test_stats.json', 'r') as json_file:
-#        stats = json.load(json_file)
-#        player_data = json_normalize(stats['stats'][0]['splits'])
-#        print(player_data)
+    result.to_csv('test_player_stats.csv')
+#    player_data.to_csv('test_player_data.csv')
     # --------------------------------------------------
     
-    player_stats = json_normalize(player_data['stats'][0]['splits'])
-    result = player_stats[PLAYER_STATS_WANTED].copy()
-    result.columns = PLAYER_STATS_RENAMED
-    result.to_csv('test_stats.csv')
-#    result = pd.read_json(player_data['stats']['splits'])
-#    print (result)
     return result

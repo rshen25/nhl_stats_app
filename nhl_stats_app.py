@@ -1,6 +1,7 @@
 import api
 import json
 import csv
+import sqlite3
 #from os import path
 import pandas as pd
 import nhl_stats_db as db
@@ -8,21 +9,10 @@ import nhl_stats_db as db
 # Load team ids on init
 team_ids = [1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,52,53,54]
 
-STANDING_STATS_WANTED = ['team.id', 'team.name', 'gamesPlayed', 'leagueRecord.wins', 'leagueRecord.losses', 
-                         'leagueRecord.ot', 'points', 'regulationWins', 'row',
-                         'goalsScored', 'goalsAgainst', 'goalDiff', 'streak.streakCode']
-
-sql_create_teams_table = """ CREATE TABLE TEAMS
-          ([Team_ID] INTEGER PRIMARY KEY, [Team_Name] TEXT, [Games_Played] INTEGER, [Wins] INTEGER,
-          [Losses] INTEGER, [OT] INTEGER, [Points] INTEGER, [Regulation_Wins] INTEGER, [ROW] INTEGER, 
-          [Goals_Scored] INTGER, [Goals_Against] INTEGER, [Goal_Diff] INTEGER, [Streak] TEXT,
-          [GPG] FLOAT, [GAPG] FLOAT, [PP%] FLOAT, [PK%] FLOAT, [Conference] TEXT, [Division] TEXT)"""
-
-sql_create_players_table =  """ CREATE TABLE PLAYERS
-          ([Player_ID] INTEGER PRIMARY KEY, [Team_ID] INTEGER, [Team_Name] TEXT, [Full_Name] TEXT, [Age] INTEGER,
-          [Games_Played] INTEGER, [Goals] INTEGER, [Assists] INTEGER, [Points] INTEGER, [+/-] INTEGER, [PIM] INTEGER,
-          [PPG] INTEGER, [PPP] INTEGER, [SHG] INTEGER, [SHP] INTEGER, [GWG] INTEGER, [OTG] INTEGER, [S] INTEGER, [S%] FLOAT,
-          [Blk] INTEGER, [FO%] FLOAT, [Hits] INTEGER, FOREIGN KEY(Team_ID) REFERENCES TEAMS(Team_ID))"""
+PLAYER_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
+                        'Weight', 'Country', 'Number', 'Shoots', 'Position', 'Games_Played',
+                        'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
+                        'GWG', 'OTG', 'S' , 'Shot_Percent', 'Blk', 'FO_Percent', 'Hits']
 
 def jprint(json_obj):
     with open('data.json', 'w', encoding='utf-8') as outfile:
@@ -81,42 +71,64 @@ def get_team_stats(conn):
     team_stats = team_stats.merge(team_standings, on=['Team_ID', 'Team_Name'])
     
     # Update the database
-    team_stats.to_sql('TEAMS', conn, if_exists='replace', index=False)
+    team_stats.to_sql('teams', conn, if_exists='replace', index=False)
         
     return team_stats
     
-# TODO: Takes in a list of player ids and requests their stats from the NHL API and 
+# Takes in a list of player ids and requests their stats from the NHL API and 
 # returns their player statistics for the current season in a pandas DataFrame
-def get_player_stats(player_ids):
+def get_player_stats(conn):
     # Iterate through all player ids
     with open("resources/player_ids/1_players.csv".format(id), 'r', encoding='utf-8-sig') as player_ids_file:
         reader = csv.DictReader(player_ids_file, delimiter=',')
         for player_id in reader:
         # Request player stat from NHL API
-            print(player_id['0'])    
-    return None
+#            print(player_id['0'])
+            result = api.get_player_stats(player_id['0'], '20192020')
+            
+            # Insert data into players database table
+            result = result.to_sql('tmp_players', con=conn, if_exists='replace', index=False)
+            
+            c = conn.cursor()
+            
+            c.execute("SELECT * FROM tmp_players")
+            rows = c.fetchall()
+            for row in rows:
+                conn.execute("""
+                             REPLACE INTO players({})
+                             VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?)
+                             """.format(','.join(PLAYER_STATS_RENAMED)),
+                             row)
+            
 
 if __name__ == "__main__":
     # Create a connection to the database
     conn = db.create_connection('nhl_stats.db')
+    engine = db.create_engine('nhl_stats.db')
     
     if conn is not None:
         # Create the team and player tables
-        db.create_table(conn, sql_create_teams_table)
-        db.create_table(conn, sql_create_players_table)
+        db.create_teams_table(conn)
+        db.create_players_table(conn)
         
     get_team_stats(conn)
-    
     c = conn.cursor()
-    c.execute("SELECT * FROM TEAMS WHERE TEAM_NAME = 'Vancouver Canucks'")
-    rows = c.fetchall()
-    for row in rows:
-        print(row)
-
+    
+    
+#    get_player_stats(conn)
+    
+#    conn.close()
+#    conn.row_factory = sqlite3.Row    
+#    c = conn.cursor()
+#    c.execute("SELECT * FROM players")
+#    rows = c.fetchall()
+#    for row in rows:
+#        print(row)
+        
 #    init_program()
     
 #    api.get_player_stats('8476941', '8477290', '8473507')
-    api.get_player_stats('8473507')
+#    api.get_player_stats('8477500', '20192020')
 #    api.get_player_ids_from_team(23)
     #jprint(api.get_teams())
 #    result = api.get_teams()
