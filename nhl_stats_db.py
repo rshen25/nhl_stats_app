@@ -54,41 +54,22 @@ def create_players_table(conn):
           [Games_Played] INTEGER, [Goals] INTEGER, [Assists] INTEGER, [Points] INTEGER, [Plus_Minus] INTEGER, [PIM] INTEGER,
           [PPG] INTEGER, [PPP] INTEGER, [SHG] INTEGER, [SHP] INTEGER, [GWG] INTEGER, [OTG] INTEGER, [S] INTEGER, [Shot_Percent] FLOAT,
           [Blk] INTEGER, [FO_Percent] FLOAT, [Hits] INTEGER, FOREIGN KEY(Team_ID) REFERENCES TEAMS(Team_ID))"""
-    
+             
     try:
         c = conn.cursor()
         c.execute(sql_create_players_table)
     except Error as e:
         print(e)
     
-
-#sql_create_teams_table = """ CREATE TABLE IF NOT EXISTS TEAMS
-#          ([Team_ID] INTEGER PRIMARY KEY, [Team_Name] TEXT, [Games_Played] INTEGER, [Wins] INTEGER,
-#          [Losses] INTEGER, [OT] INTEGER, [Points] INTEGER, [Regulation_Wins] INTEGER, [ROW] INTEGER, 
-#          [Goals_Scored] INTGER, [Goals_Against] INTEGER, [Goal_Diff] INTEGER, [Streak] TEXT,
-#          [GPG] FLOAT, [GAPG] FLOAT, [PP%] FLOAT, [PK%] FLOAT, [Conference] TEXT, [Division] TEXT)"""
-#        
-#class Teams(Base):
-#    __tablename__='Teams'
-#    Team_ID = Column(Integer, primary_key=True)
-#    Team_Name = Column(String)
-#    Games_Played = Column(Integer)
-#    Wins = Column(Integer)
-#    Losses = Column(Integer)
-#    OT = Column(Integer)
-#    Points = Column(Integer)
-#    Regulation_Wins = Column(Integer)
-#    ROW = Column(Integer)
-#    Goals_Scored = Column(Integer)
-#    Goals_Against = Column(Integer)
-#    Goal_Diff = Column(Integer)
-#    Streak = Column(String)
-#    GPG = Column(Float)
-#    GAPG = Column(Float)
-#    PP = Column(Float)
-#    PK = Column(Float)
-#    Conference = Column(String)
-#    Division = Column(String)
-#    
-#class Players(Base):
-#    
+# Create a goalie table
+def create_goalies_table(conn):
+    sql_create_goalies_table = """ CREATE TABLE IF NOT EXISTS goalies ([Player_ID] INTEGER PRIMARY KEY, 
+        [Full_Name] TEXT, [Team_ID] INTEGER, [Team_Name] TEXT, [Age] INTEGER, [Height] TEXT, 
+        [Weight] INTEGER, [Country] TEXT, [Number] INTEGER, [Catches] TEXT, [Position] TEXT, [Games_Played] INTEGER,
+        [Games_Started] INTEGER, [Wins] INTEGER, [Losses] INTEGER, [OT] INTEGER, [Shutouts] INTEGER, [Saves] INTEGER,
+        [Save_Percentage] FLOAT, [GAA] FLOAT, [GA] INTEGER, [SA] INTEGER, FOREIGN KEY (Team_ID) REFERENCES TEAMS(Team_ID))"""    
+    try:
+        c = conn.cursor()
+        c.execute(sql_create_goalies_table)
+    except Error as e:
+        print(e)

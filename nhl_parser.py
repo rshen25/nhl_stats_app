@@ -30,6 +30,15 @@ PLAYER_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age',
                         'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
                         'GWG', 'OTG', 'S' , 'Shot_Percent', 'Blk', 'FO_Percent', 'Hits']
 
+GOALIE_STATS_WANTED = ['stat.games', 'stat.gamesStarted', 'stat.wins', 'stat.losses', 
+                       'stat.ot', 'stat.shutouts', 'stat.saves', 'stat.savePercentage', 
+                       'stat.goalAgainstAverage', 'stat.goalsAgainst', 'stat.shotsAgainst']
+
+GOALIE_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
+                        'Weight', 'Country', 'Number', 'Catches', 'Position', 'Games_Played',
+                        'Games_Started', 'Wins', 'Losses', 'OT', 'Shutouts', 'Saves', 'Save_Percentage',
+                        'GAA', 'GA', 'SA']
+
 team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
              'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
              'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP_Percent', 'PK_Percent', 'Conference', 'Division']
@@ -130,32 +139,39 @@ def parse_player_ids(team_player_data):
 
 # Given the json data for a player, filter out unwanted stats and return in pandas Dataframe
 def parse_player_stats(player_data, player_stats):    
+    isGoalie = False
+    
     # Get normalize the json data into pandas DataFrames
     player_stats = json_normalize(player_stats['stats'][0]['splits'])
     player_data = json_normalize(player_data['people'])
-    
-#    print(player_stats)
-#    print(player_data)
+        
+    player_data = player_data[PLAYER_DATA_WANTED]
     
     # Filter out the stats that we do not want
     try:
         if len(player_stats.columns) > 0:
-            player_stats = player_stats[PLAYER_STATS_WANTED].copy()
+            if (player_data['primaryPosition.code'][0] == 'G'):
+                player_stats = player_stats[GOALIE_STATS_WANTED].copy()
+                
+                # Merge the player data and statistic DataFrames
+                result = player_data.merge(player_stats, left_index=True, right_index=True)
+    
+                # Rename the column names to match the database
+                result.columns = GOALIE_STATS_RENAMED
+
+                isGoalie = True
+                
+                return result, isGoalie
+                
+            else:
+                player_stats = player_stats[PLAYER_STATS_WANTED].copy()
+                
         else:
             player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
+
     except KeyError as e:
         player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
-        print(e)
-        
-    try:        
-        if len(player_stats.columns) > 0:
-            player_data = player_data[PLAYER_DATA_WANTED].copy()
-        else:
-            player_stats = pd.DataFrame(columns=PLAYER_DATA_WANTED)
-    except KeyError as e:
-        player_stats = pd.DataFrame(columns=PLAYER_DATA_WANTED)
-        print(e)
-    
+        print(e)    
     
     # Merge the player data and statistic DataFrames
     result = player_data.merge(player_stats, left_index=True, right_index=True)
@@ -164,8 +180,8 @@ def parse_player_stats(player_data, player_stats):
     result.columns = PLAYER_STATS_RENAMED
     
     # Testing ------------------------------------------
-    result.to_csv('test_player_stats.csv')
+#    result.to_csv('test_player_stats.csv')
 #    player_data.to_csv('test_player_data.csv')
     # --------------------------------------------------
     
-    return result
+    return result, isGoalie

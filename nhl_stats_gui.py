@@ -1,14 +1,4 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'F:\PyProjects\nhl_stats_app\nhl_stats_app_ui.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets, QtSql
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -52,16 +42,16 @@ class Ui_MainWindow(object):
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(370, 430, 75, 23))
         self.pushButton_5.setObjectName("pushButton_5")
-        self.table_west_standings = QtWidgets.QTableView(self.centralwidget)
+        self.table_west_standings = CustomTable(self.centralwidget)
         self.table_west_standings.setGeometry(QtCore.QRect(550, 130, 571, 311))
         self.table_west_standings.setObjectName("table_west_standings")
-        self.table_player_stats = QtWidgets.QTableView(self.centralwidget)
+        self.table_player_stats = CustomTable(self.centralwidget)
         self.table_player_stats.setGeometry(QtCore.QRect(10, 130, 521, 291))
         self.table_player_stats.setObjectName("table_player_stats")
-        self.table_goalie_stats = QtWidgets.QTableView(self.centralwidget)
+        self.table_goalie_stats = CustomTable(self.centralwidget)
         self.table_goalie_stats.setGeometry(QtCore.QRect(10, 470, 521, 301))
         self.table_goalie_stats.setObjectName("table_goalie_stats")
-        self.table_east_standings = QtWidgets.QTableView(self.centralwidget)
+        self.table_east_standings = CustomTable(self.centralwidget)
         self.table_east_standings.setGeometry(QtCore.QRect(550, 460, 571, 311))
         self.table_east_standings.setObjectName("table_east_standings")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -79,8 +69,10 @@ class Ui_MainWindow(object):
         db = self.create_connection()
         
         self.set_standings_table(self.table_west_standings, self.table_east_standings)
-        
-        self.set_player_stats_table(self.table_player_stats, self.table_goalie_stats)
+                
+        self.set_player_stats_table(self.table_player_stats)
+        self.set_goalie_stats_table(self.table_goalie_stats)
+                
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -117,7 +109,8 @@ class Ui_MainWindow(object):
     def set_standings_table(self, table_west_standings, table_east_standings):
         # Set the western conference standings table
         west_model = QtSql.QSqlQueryModel()
-        west_model.setQuery("""SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+        west_model.setQuery("""
+                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
                             GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
                             Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
                             WHERE Conference = 'Western'
@@ -128,7 +121,8 @@ class Ui_MainWindow(object):
         
         # Set the eastern conference standings table
         east_model = QtSql.QSqlQueryModel()
-        east_model.setQuery("""SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+        east_model.setQuery("""
+                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
                             GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
                             Goals_Scored, Goals_Against, Goal_Diff, Streak 
                             FROM teams WHERE Conference = 'Eastern'
@@ -137,27 +131,43 @@ class Ui_MainWindow(object):
         table_east_standings.setModel(east_model)
         
 
-    # TODO: Sets the database to the player stats table to enable queries to db
-    def set_player_stats_table(self, table_player_stats, table_goalie_stats):
+    # Sets the database to the player stats table to enable queries to db
+    def set_player_stats_table(self, table_player_stats):
         # Set the western conference standings table
         player_model = QtSql.QSqlQueryModel()
-        player_model.setQuery("""SELECT Full_Name, Team_Name, Position, Games_Played, 
+        player_model.setQuery("""
+                              SELECT Full_Name, Team_Name, Position, Games_Played, 
                               Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG,
                               SHP, GWG, OTG, S, Shot_Percent, Blk, FO_Percent, Hits FROM players
                               ORDER BY Points DESC
                               """)
         
         table_player_stats.setModel(player_model)
-        
+            
+    # Set the goalie stats table with the database
+    def set_goalie_stats_table(self, table_goalie_stats):
         # Set the eastern conference standings table
         goalie_model = QtSql.QSqlQueryModel()
-        goalie_model.setQuery("SELECT * FROM players WHERE Position = 'G'")
+        goalie_model.setQuery("""
+                              SELECT Full_Name, Team_Name, Age, Height, Weight, Country,
+                              Number, Position, Games_Played, Games_Started, Wins, Losses,
+                              OT, Shutouts, Saves, Save_Percentage, GAA, GA, SA FROM goalies
+                              ORDER BY Wins DESC
+                              """)
         table_goalie_stats.setModel(goalie_model)
-    
-    # TODO: set the goalie stats table with the database
-    def set_goalie_stats_table():
-        return None
-
+        
+# Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
+class CustomTable(QtWidgets.QTableView):    
+    def resizeEvent(self, event):
+        print("it works")
+        super(QtWidgets.QTableView, self).resizeEvent(event)
+        header = self.horizontalHeader()
+        for column in range(header.count()):
+            header.setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeToContents)
+            width = header.sectionSize(column)
+            header.setSectionResizeMode(column, QtWidgets.QHeaderView.Interactive)
+            header.resizeSection(column, width)
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

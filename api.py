@@ -148,8 +148,8 @@ def get_player_stats(player_id, season):
     if response.status_code == 200:
         player_stats = response.json()
         # Parse the data to include only stats that we want
-        result = parse.parse_player_stats(player_data, player_stats)
-    return result
+        result, isGoalie = parse.parse_player_stats(player_data, player_stats)
+    return result, isGoalie
     
     # TESTING ----------------------------
 #    with open('test_player_data.json', 'r') as data_file:
