@@ -56,7 +56,8 @@ def parse_teams(json_data):
     team_stats = pd.DataFrame()
     conference = pd.DataFrame()
     division = pd.DataFrame()
-    for k in json_data['teams']:
+    abbreviation = pd.DataFrame(columns=['abbreviation'])
+    for index, k in enumerate(json_data['teams']):
         tmp = json_normalize(k['teamStats'][0]['splits'][0])
         team_stats = team_stats.append(tmp, ignore_index = True)
         
@@ -67,6 +68,8 @@ def parse_teams(json_data):
         tmp_d = json_normalize(k['division'])
         division = division.append(tmp_d, ignore_index = True)
         
+        abbreviation.loc[index] = k['abbreviation']
+
     # Get only columns/stats that we want
     team_stats = team_stats[TEAM_STATS_WANTED].copy()
     
@@ -76,6 +79,7 @@ def parse_teams(json_data):
     # Add conference/division column to results
     team_stats['Conference'] = conference['name']
     team_stats['Division'] = division['name']
+    team_stats['Abbreviation'] = abbreviation['abbreviation']
     
     return team_stats
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1129</width>
-    <height>815</height>
+    <width>1198</width>
+    <height>968</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QLabel" name="label_standings">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>90</y>
+      <x>10</x>
+      <y>580</y>
       <width>47</width>
       <height>13</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QLabel" name="label_west_conference">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>110</y>
+      <x>20</x>
+      <y>590</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QLabel" name="label_east_conference">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>440</y>
+      <x>610</x>
+      <y>590</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -66,24 +66,11 @@
      <string>Player Stats</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_games">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>0</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Games</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_goalie_stats">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>450</y>
+      <x>20</x>
+      <y>340</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -92,24 +79,11 @@
      <string>Goalies Stats</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_point_totals">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>110</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Point Totals</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btn_update_player_stats">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>100</y>
+      <y>90</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -121,8 +95,8 @@
    <widget class="QPushButton" name="btn_update_goalie_stats">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>440</y>
+      <x>90</x>
+      <y>340</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -134,8 +108,8 @@
    <widget class="QPushButton" name="btn_update_standings">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>100</y>
+      <x>130</x>
+      <y>580</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -147,8 +121,8 @@
    <widget class="QPushButton" name="pushButton_4">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>430</y>
+      <x>1110</x>
+      <y>330</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -160,8 +134,8 @@
    <widget class="QPushButton" name="pushButton_5">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>430</y>
+      <x>1030</x>
+      <y>330</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -173,9 +147,9 @@
    <widget class="QTableView" name="table_west_standings">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>130</y>
-      <width>571</width>
+      <x>10</x>
+      <y>610</y>
+      <width>581</width>
       <height>311</height>
      </rect>
     </property>
@@ -184,9 +158,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>130</y>
-      <width>521</width>
-      <height>291</height>
+      <y>110</y>
+      <width>1181</width>
+      <height>221</height>
      </rect>
     </property>
    </widget>
@@ -194,21 +168,32 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>470</y>
-      <width>521</width>
-      <height>301</height>
+      <y>360</y>
+      <width>1181</width>
+      <height>221</height>
      </rect>
     </property>
    </widget>
    <widget class="QTableView" name="table_east_standings">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>460</y>
-      <width>571</width>
+      <x>610</x>
+      <y>610</y>
+      <width>581</width>
       <height>311</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>1181</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -216,7 +201,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1129</width>
+     <width>1198</width>
      <height>21</height>
     </rect>
    </property>

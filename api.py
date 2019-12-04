@@ -78,23 +78,23 @@ def get_team(id):
     
 def get_all_team_stats():
         #for testing purposes we will just use the file
-        #result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
-        with open('data.json', 'r') as json_file:
-            result = json.load(json_file)
+        result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
+#        with open('data.json', 'r') as json_file:
+#            result = json.load(json_file)
         result = parse.parse_teams(result)
         return result
     
 def get_standings():
     # https://statsapi.web.nhl.com/api/v1/teams/?expand=team.stats
-#    response = requests.get("{}/standings".format(BASE))
-#    if response.status_code == 200:
-#        response = response.json()
-#        result = parse.parse_standings(response)
+    response = requests.get("{}/standings".format(BASE))
+    if response.status_code == 200:
+        response = response.json()
+        result = parse.parse_standings(response)
     
     # TESTING --------------------------
-    with open('standings.json', 'r') as json_file:
-        response = json.load(json_file)
-        result = parse.parse_standings(response)
+#    with open('standings.json', 'r') as json_file:
+#        response = json.load(json_file)
+#        result = parse.parse_standings(response)
     # -------------------------------------
         return result
 

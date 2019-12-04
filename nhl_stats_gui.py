@@ -3,60 +3,57 @@ from PyQt5 import QtCore, QtGui, QtWidgets, QtSql
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1129, 815)
+        MainWindow.resize(1198, 968)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label_standings = QtWidgets.QLabel(self.centralwidget)
-        self.label_standings.setGeometry(QtCore.QRect(550, 90, 47, 13))
+        self.label_standings.setGeometry(QtCore.QRect(10, 580, 47, 13))
         self.label_standings.setObjectName("label_standings")
         self.label_west_conference = QtWidgets.QLabel(self.centralwidget)
-        self.label_west_conference.setGeometry(QtCore.QRect(550, 110, 121, 16))
+        self.label_west_conference.setGeometry(QtCore.QRect(20, 590, 121, 16))
         self.label_west_conference.setObjectName("label_west_conference")
         self.label_east_conference = QtWidgets.QLabel(self.centralwidget)
-        self.label_east_conference.setGeometry(QtCore.QRect(540, 440, 121, 16))
+        self.label_east_conference.setGeometry(QtCore.QRect(610, 590, 121, 16))
         self.label_east_conference.setObjectName("label_east_conference")
         self.label_player_stats = QtWidgets.QLabel(self.centralwidget)
         self.label_player_stats.setGeometry(QtCore.QRect(10, 90, 81, 16))
         self.label_player_stats.setObjectName("label_player_stats")
         self.label_games = QtWidgets.QLabel(self.centralwidget)
-        self.label_games.setGeometry(QtCore.QRect(440, 0, 47, 13))
+        self.label_games.setGeometry(QtCore.QRect(560, 0, 47, 13))
         self.label_games.setObjectName("label_games")
         self.label_goalie_stats = QtWidgets.QLabel(self.centralwidget)
-        self.label_goalie_stats.setGeometry(QtCore.QRect(10, 450, 81, 16))
+        self.label_goalie_stats.setGeometry(QtCore.QRect(20, 340, 81, 16))
         self.label_goalie_stats.setObjectName("label_goalie_stats")
-        self.label_point_totals = QtWidgets.QLabel(self.centralwidget)
-        self.label_point_totals.setGeometry(QtCore.QRect(10, 110, 81, 16))
-        self.label_point_totals.setObjectName("label_point_totals")
         self.btn_update_player_stats = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_player_stats.setGeometry(QtCore.QRect(70, 100, 75, 23))
+        self.btn_update_player_stats.setGeometry(QtCore.QRect(70, 90, 75, 23))
         self.btn_update_player_stats.setObjectName("btn_update_player_stats")
         self.btn_update_goalie_stats = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_goalie_stats.setGeometry(QtCore.QRect(80, 440, 75, 23))
+        self.btn_update_goalie_stats.setGeometry(QtCore.QRect(90, 340, 75, 23))
         self.btn_update_goalie_stats.setObjectName("btn_update_goalie_stats")
         self.btn_update_standings = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_standings.setGeometry(QtCore.QRect(650, 100, 75, 23))
+        self.btn_update_standings.setGeometry(QtCore.QRect(130, 580, 75, 23))
         self.btn_update_standings.setObjectName("btn_update_standings")
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(450, 430, 75, 23))
+        self.pushButton_4.setGeometry(QtCore.QRect(1110, 330, 75, 23))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(370, 430, 75, 23))
+        self.pushButton_5.setGeometry(QtCore.QRect(1030, 330, 75, 23))
         self.pushButton_5.setObjectName("pushButton_5")
         self.table_west_standings = CustomTable(self.centralwidget)
-        self.table_west_standings.setGeometry(QtCore.QRect(550, 130, 571, 311))
+        self.table_west_standings.setGeometry(QtCore.QRect(10, 610, 581, 311))
         self.table_west_standings.setObjectName("table_west_standings")
         self.table_player_stats = CustomTable(self.centralwidget)
-        self.table_player_stats.setGeometry(QtCore.QRect(10, 130, 521, 291))
+        self.table_player_stats.setGeometry(QtCore.QRect(10, 110, 1181, 221))
         self.table_player_stats.setObjectName("table_player_stats")
         self.table_goalie_stats = CustomTable(self.centralwidget)
-        self.table_goalie_stats.setGeometry(QtCore.QRect(10, 470, 521, 301))
+        self.table_goalie_stats.setGeometry(QtCore.QRect(10, 360, 1181, 221))
         self.table_goalie_stats.setObjectName("table_goalie_stats")
         self.table_east_standings = CustomTable(self.centralwidget)
-        self.table_east_standings.setGeometry(QtCore.QRect(550, 460, 571, 311))
+        self.table_east_standings.setGeometry(QtCore.QRect(610, 610, 581, 311))
         self.table_east_standings.setObjectName("table_east_standings")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1129, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1198, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -72,6 +69,18 @@ class Ui_MainWindow(object):
                 
         self.set_player_stats_table(self.table_player_stats)
         self.set_goalie_stats_table(self.table_goalie_stats)
+        
+        # Sets the tables to have alternating row colours
+        self.table_player_stats.setAlternatingRowColors(True)
+        self.table_goalie_stats.setAlternatingRowColors(True)
+        self.table_west_standings.setAlternatingRowColors(True)
+        self.table_east_standings.setAlternatingRowColors(True)
+        
+        # Set the style colours for each table
+        self.change_table_style(self.table_player_stats)
+        self.change_table_style(self.table_goalie_stats)
+        self.change_table_style(self.table_west_standings)
+        self.change_table_style(self.table_east_standings)        
                 
 
     def retranslateUi(self, MainWindow):
@@ -83,7 +92,6 @@ class Ui_MainWindow(object):
         self.label_player_stats.setText(_translate("MainWindow", "Player Stats"))
         self.label_games.setText(_translate("MainWindow", "Games"))
         self.label_goalie_stats.setText(_translate("MainWindow", "Goalies Stats"))
-        self.label_point_totals.setText(_translate("MainWindow", "Point Totals"))
         self.btn_update_player_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_goalie_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_standings.setText(_translate("MainWindow", "Update"))
@@ -156,10 +164,19 @@ class Ui_MainWindow(object):
                               """)
         table_goalie_stats.setModel(goalie_model)
         
+    
+    def change_table_style(self, table):
+        header = table.horizontalHeader()
+        header.setStyleSheet("""::section{background-color: rgb(56,56,56);
+                                        color: white;}""")
+        vertical = table.verticalHeader()
+        vertical.setStyleSheet("""::section{background-color: rgb(56,56,56);
+                                        color: white;}""")
+        table.setStyleSheet("background-color:rgb(212, 213, 214);alternate-background-color:rgb(165, 171, 181);")
+        
 # Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
-class CustomTable(QtWidgets.QTableView):    
+class CustomTable(QtWidgets.QTableView):
     def resizeEvent(self, event):
-        print("it works")
         super(QtWidgets.QTableView, self).resizeEvent(event)
         header = self.horizontalHeader()
         for column in range(header.count()):
