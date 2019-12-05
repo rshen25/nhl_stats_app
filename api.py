@@ -56,25 +56,6 @@ def get_players(ids):
 def get_team(id):
     result = requests.get("{}/teams/{}".format(BASE, id)).json()
     return result
-
-
-## Gets all the teams in the NHL and their current season stats
-#def get_teams(ids=None):
-#    if isinstance(ids, list):
-##        suffix = ",".join(map(str, ids))
-##        result = requests.get("{}/teams/?teamId={}?expand=team.stats".format(BASE, suffix)).json()
-#        #result = json.dumps(result, sort_keys=True, indent=4)
-##        result = pd.read_json(path_or_buf=result, orient='records')
-#        result = None
-#        return result
-#
-#    else:
-#        #for testing purposes we will just use the file
-#        #result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
-#        with open('data.json', 'r') as json_file:
-#            result = json.load(json_file)
-#        result = parse.parse_teams(result)
-#        return result
     
 def get_all_team_stats():
         #for testing purposes we will just use the file
@@ -163,16 +144,12 @@ def get_player_stats(player_id, season):
     
     # ------------------------------------
     
-    # Request stats for a specific player from the NHL API
-#    response = requests.get("{}/people/{}/stats".format(BASE, player_id))
-#    if response.status_code == 200:
-#        response = response.json()
-        # Parse the data to include only stats that we want
-#        result = parse.parse_player_stats(response)
-        # Write the result to csv file
-#        result.to_csv("resources/player_stats/{}.csv".format(player_id))
-#        return result
-#    with open('{}.json'.format(teamId), 'w') as json_file:
-#        json.dump(response, json_file, sort_keys=True, indent=4)
-#        else: 
-#            return None
+# Requests for the current scheduled NHL games for the day and returns it in a pandas DataFrame format
+def get_current_games():
+    response = requests.get("{}/schedule".format(BASE))
+    if response.status_code == 200:
+        game_data = response.json()
+        result = parse.parse_games(game_data)
+        return result
+    else:
+        return None

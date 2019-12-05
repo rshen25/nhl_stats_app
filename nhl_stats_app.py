@@ -123,6 +123,8 @@ if __name__ == "__main__":
         
     get_team_stats(conn)
     create_teams_dict(conn)
+    
+    games = api.get_current_games()
 #    c = conn.cursor()
 #    
 #    

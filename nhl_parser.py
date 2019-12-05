@@ -189,3 +189,15 @@ def parse_player_stats(player_data, player_stats):
     # --------------------------------------------------
     
     return result, isGoalie
+
+# Parses the data for each scheduled NHL game for the current day
+def parse_games(games_data):
+    
+    games = pd.DataFrame()
+    
+    games = json_normalize(games_data['dates'][0]['games'])
+    result = games[['gamePk', 'teams.away.team.id', 'teams.home.team.id']].copy()
+    result.columns = ['gameID', 'awayID', 'homeID']
+#    games.to_csv('test_games.csv')
+    
+    return result

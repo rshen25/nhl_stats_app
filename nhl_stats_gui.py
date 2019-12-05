@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, QtSql
+import api
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(object):   
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1198, 968)
@@ -51,6 +52,12 @@ class Ui_MainWindow(object):
         self.table_east_standings = CustomTable(self.centralwidget)
         self.table_east_standings.setGeometry(QtCore.QRect(610, 610, 581, 311))
         self.table_east_standings.setObjectName("table_east_standings")
+        self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1181, 80))
+        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+        self.gamesLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
+        self.gamesLayout.setContentsMargins(0, 0, 0, 0)
+        self.gamesLayout.setObjectName("gamesLayout")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1198, 21))
@@ -80,8 +87,10 @@ class Ui_MainWindow(object):
         self.change_table_style(self.table_player_stats)
         self.change_table_style(self.table_goalie_stats)
         self.change_table_style(self.table_west_standings)
-        self.change_table_style(self.table_east_standings)        
-                
+        self.change_table_style(self.table_east_standings)      
+        
+        games = api.get_current_games()
+        self.create_current_games_buttons(games, self.gamesLayout)                
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -164,7 +173,7 @@ class Ui_MainWindow(object):
                               """)
         table_goalie_stats.setModel(goalie_model)
         
-    
+    # Changes the style of a given table to be have alternating row colours and black headers
     def change_table_style(self, table):
         header = table.horizontalHeader()
         header.setStyleSheet("""::section{background-color: rgb(56,56,56);
@@ -173,7 +182,18 @@ class Ui_MainWindow(object):
         vertical.setStyleSheet("""::section{background-color: rgb(56,56,56);
                                         color: white;}""")
         table.setStyleSheet("background-color:rgb(212, 213, 214);alternate-background-color:rgb(165, 171, 181);")
-        
+    
+    # Creates buttons for each current nhl games for the day
+    def create_current_games_buttons(self, games, layout: QtWidgets.QHBoxLayout):
+        # Iterate through each row
+        for index, row in games.iterrows():
+            # Create a button, edit the text to be Away @ Home
+            # TODO: reminder to change it to team abbreviations
+            button = QtWidgets.QPushButton("{} @ {}".format(row['awayID'], row['homeID']))
+#            button.clicked.connect()
+            layout.addWidget(button)
+
+                    
 # Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
 class CustomTable(QtWidgets.QTableView):
     def resizeEvent(self, event):
@@ -184,7 +204,7 @@ class CustomTable(QtWidgets.QTableView):
             width = header.sectionSize(column)
             header.setSectionResizeMode(column, QtWidgets.QHeaderView.Interactive)
             header.resizeSection(column, width)
-        
+                        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
