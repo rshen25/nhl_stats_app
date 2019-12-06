@@ -1,20 +1,16 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'F:\git_local_repo\nhl_stats_app\nhl_stats_player_info.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(988, 606)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Player_Window(QtWidgets.QMainWindow):        
+    def __init__(self, player_data):
+        super(Player_Window, self).__init__()
+        self.player_data = player_data
+        self.setupUi()
+        
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(988, 606)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.tableView = QtWidgets.QTableView(self.centralwidget)
         self.tableView.setGeometry(QtCore.QRect(20, 150, 951, 121))
@@ -65,23 +61,23 @@ class Ui_MainWindow(object):
         self.label_12 = QtWidgets.QLabel(self.centralwidget)
         self.label_12.setGeometry(QtCore.QRect(20, 290, 81, 16))
         self.label_12.setObjectName("label_12")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 988, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.setStatusBar(self.statusbar)
+        self.actionExit = QtWidgets.QAction(self)
         self.actionExit.setObjectName("actionExit")
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(self)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -105,7 +101,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = Player_Window()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

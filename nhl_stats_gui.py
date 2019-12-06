@@ -1,11 +1,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, QtSql
 import api
+from nhl_stats_boxscore import Boxscore_Window
+import nhl_stats_player_info as pi
 
-class Ui_MainWindow(object):   
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1198, 968)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class NHL_MainWindow(QtWidgets.QMainWindow):
+    def __init__(self, *args, **kwargs):
+        super(NHL_MainWindow, self).__init__(*args, **kwargs)
+        self.dialogs = list() 
+        self.setupUi()
+        
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(1198, 968)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.label_standings = QtWidgets.QLabel(self.centralwidget)
         self.label_standings.setGeometry(QtCore.QRect(10, 580, 47, 13))
@@ -58,17 +65,17 @@ class Ui_MainWindow(object):
         self.gamesLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.gamesLayout.setContentsMargins(0, 0, 0, 0)
         self.gamesLayout.setObjectName("gamesLayout")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1198, 21))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(self)
+        QtCore.QMetaObject.connectSlotsByName(self)
         
         db = self.create_connection()
         
@@ -189,11 +196,15 @@ class Ui_MainWindow(object):
         for index, row in games.iterrows():
             # Create a button, edit the text to be Away @ Home
             # TODO: reminder to change it to team abbreviations
-            button = QtWidgets.QPushButton("{} @ {}".format(row['awayID'], row['homeID']))
-#            button.clicked.connect()
-            layout.addWidget(button)
+            self.button = QtWidgets.QPushButton("{} @ {}".format(row['awayID'], row['homeID']))
+            self.button.clicked.connect(self.open_boxscore)
+            layout.addWidget(self.button)
+            
+    def open_boxscore(self):
+        dialog = Boxscore_Window()
+        self.dialogs.append(dialog)
+        dialog.show()
 
-                    
 # Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
 class CustomTable(QtWidgets.QTableView):
     def resizeEvent(self, event):
@@ -208,8 +219,8 @@ class CustomTable(QtWidgets.QTableView):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    MainWindow = NHL_MainWindow()
+#    ui = Ui_MainWindow()
+#    ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

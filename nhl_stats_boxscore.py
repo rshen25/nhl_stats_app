@@ -1,20 +1,17 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'F:\git_local_repo\nhl_stats_app\nhl_stats_boxscore.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(867, 748)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Boxscore_Window(QtWidgets.QMainWindow):
+    def __init__(self, boxscore_data):
+        super(Boxscore_Window, self).__init__()
+        self.boxscore_data = boxscore_data
+        self.setupUi()
+        print("window created")
+        
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(867, 748)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.table_home_stats = QtWidgets.QTableView(self.centralwidget)
         self.table_home_stats.setGeometry(QtCore.QRect(10, 30, 651, 321))
@@ -43,23 +40,23 @@ class Ui_MainWindow(object):
         self.label_away_score = QtWidgets.QLabel(self.centralwidget)
         self.label_away_score.setGeometry(QtCore.QRect(80, 360, 61, 16))
         self.label_away_score.setObjectName("label_away_score")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 867, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.setStatusBar(self.statusbar)
+        self.actionExit = QtWidgets.QAction(self)
         self.actionExit.setObjectName("actionExit")
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
-
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        self.retranslateUi(self)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -72,12 +69,11 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+#if __name__ == "__main__":
+#    import sys
+#    app = QtWidgets.QApplication(sys.argv)
+#    MainWindow = QtWidgets.QMainWindow()
+#    ui = Boxscore_Window()
+#    ui.setupUi(MainWindow)
+#    MainWindow.show()
+#    sys.exit(app.exec_())
