@@ -1,12 +1,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, QtSql
 import api
 from nhl_stats_boxscore import Boxscore_Window
-import nhl_stats_player_info as pi
+from functools import partial
+from nhl_stats_player_info import Player_Window
+from custom_table import CustomTable
 
 class NHL_MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(NHL_MainWindow, self).__init__(*args, **kwargs)
-        self.dialogs = list() 
+        self.dialogs = list()
+        self.games = api.get_current_games()
         self.setupUi()
         
     def setupUi(self):
@@ -41,24 +44,33 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_update_standings = QtWidgets.QPushButton(self.centralwidget)
         self.btn_update_standings.setGeometry(QtCore.QRect(130, 580, 75, 23))
         self.btn_update_standings.setObjectName("btn_update_standings")
-        self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(1110, 330, 75, 23))
-        self.pushButton_4.setObjectName("pushButton_4")
+        self.btn_player_details = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_player_details.setGeometry(QtCore.QRect(1110, 330, 75, 23))
+        self.btn_player_details.setObjectName("pushButton_4")
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(1030, 330, 75, 23))
         self.pushButton_5.setObjectName("pushButton_5")
+        
         self.table_west_standings = CustomTable(self.centralwidget)
         self.table_west_standings.setGeometry(QtCore.QRect(10, 610, 581, 311))
         self.table_west_standings.setObjectName("table_west_standings")
+#        self.table_west_standings.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        
         self.table_player_stats = CustomTable(self.centralwidget)
         self.table_player_stats.setGeometry(QtCore.QRect(10, 110, 1181, 221))
         self.table_player_stats.setObjectName("table_player_stats")
+#        self.table_player_stats.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        
         self.table_goalie_stats = CustomTable(self.centralwidget)
         self.table_goalie_stats.setGeometry(QtCore.QRect(10, 360, 1181, 221))
         self.table_goalie_stats.setObjectName("table_goalie_stats")
+#        self.table_goalie_stats.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        
         self.table_east_standings = CustomTable(self.centralwidget)
         self.table_east_standings.setGeometry(QtCore.QRect(610, 610, 581, 311))
         self.table_east_standings.setObjectName("table_east_standings")
+#        self.table_east_standings.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
+        
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1181, 80))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -83,7 +95,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
                 
         self.set_player_stats_table(self.table_player_stats)
         self.set_goalie_stats_table(self.table_goalie_stats)
-        
+                
         # Sets the tables to have alternating row colours
         self.table_player_stats.setAlternatingRowColors(True)
         self.table_goalie_stats.setAlternatingRowColors(True)
@@ -95,9 +107,13 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.change_table_style(self.table_goalie_stats)
         self.change_table_style(self.table_west_standings)
         self.change_table_style(self.table_east_standings)      
+
+        self.create_current_games_buttons(self.gamesLayout)              
         
-        games = api.get_current_games()
-        self.create_current_games_buttons(games, self.gamesLayout)                
+        # Set up the more player details button
+        #TODO: Rename this button
+#        self.btn_player_details.clicked.connect(partial(self.open_player_info))
+        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -111,7 +127,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_update_player_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_goalie_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_standings.setText(_translate("MainWindow", "Update"))
-        self.pushButton_4.setText(_translate("MainWindow", "PushButton"))
+        self.btn_player_details.setText(_translate("MainWindow", "More Player Details"))
         self.pushButton_5.setText(_translate("MainWindow", "PushButton"))
         
 
@@ -191,30 +207,40 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         table.setStyleSheet("background-color:rgb(212, 213, 214);alternate-background-color:rgb(165, 171, 181);")
     
     # Creates buttons for each current nhl games for the day
-    def create_current_games_buttons(self, games, layout: QtWidgets.QHBoxLayout):
+    def create_current_games_buttons(self, layout: QtWidgets.QHBoxLayout):
         # Iterate through each row
-        for index, row in games.iterrows():
+        for index, row in self.games.iterrows():
             # Create a button, edit the text to be Away @ Home
             # TODO: reminder to change it to team abbreviations
             self.button = QtWidgets.QPushButton("{} @ {}".format(row['awayID'], row['homeID']))
-            self.button.clicked.connect(self.open_boxscore)
+            self.button.clicked.connect(partial(self.open_boxscore, index))
             layout.addWidget(self.button)
             
-    def open_boxscore(self):
-        dialog = Boxscore_Window()
+    def open_boxscore(self, index):
+        boxscore_data = api.get_live_game_feed(self.games.iloc[index]['gameID'])
+        dialog = Boxscore_Window(boxscore_data)
         self.dialogs.append(dialog)
         dialog.show()
+        
+    # Opens the player info dialog window to display more details about a specific player
+#    def open_player_info(self, id):
+#        player_data = api.get_player_stats(id, '20192020')
+#        player_career_data = api.get_player_career_stats(id)
+#        dialog = Player_Window(player_data, player_career_data)
+#        self.dialogs.append(dialog)
+#        dialog.show()
+        
 
-# Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
-class CustomTable(QtWidgets.QTableView):
-    def resizeEvent(self, event):
-        super(QtWidgets.QTableView, self).resizeEvent(event)
-        header = self.horizontalHeader()
-        for column in range(header.count()):
-            header.setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeToContents)
-            width = header.sectionSize(column)
-            header.setSectionResizeMode(column, QtWidgets.QHeaderView.Interactive)
-            header.resizeSection(column, width)
+## Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
+#class CustomTable(QtWidgets.QTableView):
+#    def resizeEvent(self, event):
+#        super(QtWidgets.QTableView, self).resizeEvent(event)
+#        header = self.horizontalHeader()
+#        for column in range(header.count()):
+#            header.setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeToContents)
+#            width = header.sectionSize(column)
+#            header.setSectionResizeMode(column, QtWidgets.QHeaderView.Interactive)
+#            header.resizeSection(column, width)
                         
 if __name__ == "__main__":
     import sys

@@ -190,6 +190,25 @@ def parse_player_stats(player_data, player_stats):
     
     return result, isGoalie
 
+def parse_player_career_stats(player_stats):
+    career_stats = pd.DataFrame()
+    for stats in player_stats['stats'][0]['splits']:
+        tmp = json_normalize(stats)
+        career_stats = pd.concat([career_stats, tmp], ignore_index=True, sort=False)
+
+    career_stats = career_stats[['season', 'league.name', 'team.name','stat.games', 'stat.goals',
+                                 'stat.assists', 'stat.points', 'stat.plusMinus', 'stat.pim', 
+                                 'stat.powerPlayGoals', 'stat.powerPlayPoints', 'stat.shortHandedGoals',
+                                 'stat.shortHandedPoints', 'stat.gameWinningGoals', 'stat.overTimeGoals',
+                                 'stat.shots', 'stat.shotPct', 'stat.hits', 'stat.blocked']].copy()  
+    
+    career_stats.columns = ['Season', 'League', 'Team', 'GP', 'G', 'A', 'P', '+/-', 'PIM',
+                            'PPG', 'PPP', 'SHG', 'SHP', 'GWG', 'OTG', 'S', 'S%', 'Hits', 'Blk']
+    career_stats = career_stats.sort_values(by=['Season'], ascending=False)
+    
+    career_stats.to_csv('test_career_stats.csv')
+    return career_stats
+
 # Parses the data for each scheduled NHL game for the current day
 def parse_games(games_data):
     

@@ -3,6 +3,7 @@
 import requests
 import json
 import pandas as pd
+import boxscore as bs
 import nhl_parser as parse
 
 BASE = "https://statsapi.web.nhl.com/api/v1"
@@ -144,12 +145,33 @@ def get_player_stats(player_id, season):
     
     # ------------------------------------
     
+# Gets the career stats for a player via the NHL API, parses it so that it contains desired statistics
+# and returns in a pandas DataFrame
+def get_player_career_stats(player_id):    
+    response = requests.get("{}/people/{}/stats?stats=yearByYear".format(BASE, player_id))
+    print(response.status_code)
+    if response.status_code == 200:
+        player_stats = response.json()
+        # Parse the data to include only stats that we want
+        result = parse.parse_player_career_stats(player_stats)
+    return result
+    
 # Requests for the current scheduled NHL games for the day and returns it in a pandas DataFrame format
 def get_current_games():
     response = requests.get("{}/schedule".format(BASE))
     if response.status_code == 200:
         game_data = response.json()
         result = parse.parse_games(game_data)
+        return result
+    else:
+        return None
+
+# Requests the current NHL game data for a given game ID and returns a parsed boxscore object that stores the relevant data
+def get_live_game_feed(id):
+    response = requests.get("{}/game/{}/feed/live".format(BASE, id))
+    if response.status_code == 200:
+        game_data = response.json()
+        result = bs.boxscore(game_data)
         return result
     else:
         return None

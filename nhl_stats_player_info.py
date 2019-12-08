@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from DataFrameModel import DataFrameModel
 
 class Player_Window(QtWidgets.QMainWindow):        
-    def __init__(self, player_data):
+    def __init__(self, player_data, player_career_data):
         super(Player_Window, self).__init__()
         self.player_data = player_data
         self.setupUi()
