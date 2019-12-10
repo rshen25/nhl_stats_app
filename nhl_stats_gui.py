@@ -112,7 +112,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         
         # Set up the more player details button
         #TODO: Rename this button
-#        self.btn_player_details.clicked.connect(partial(self.open_player_info))
+        self.btn_player_details.clicked.connect(self.get_selected_player_row)
         
 
     def retranslateUi(self, MainWindow):
@@ -223,24 +223,23 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         dialog.show()
         
     # Opens the player info dialog window to display more details about a specific player
-#    def open_player_info(self, id):
-#        player_data = api.get_player_stats(id, '20192020')
-#        player_career_data = api.get_player_career_stats(id)
-#        dialog = Player_Window(player_data, player_career_data)
-#        self.dialogs.append(dialog)
-#        dialog.show()
+    def open_player_info(self):
+        # Get the player name
+        player_name, team = self.get_selected_player()
         
-
-## Overrides TableView class, sets the table columns to fit to content, and allows for user resizing
-#class CustomTable(QtWidgets.QTableView):
-#    def resizeEvent(self, event):
-#        super(QtWidgets.QTableView, self).resizeEvent(event)
-#        header = self.horizontalHeader()
-#        for column in range(header.count()):
-#            header.setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeToContents)
-#            width = header.sectionSize(column)
-#            header.setSectionResizeMode(column, QtWidgets.QHeaderView.Interactive)
-#            header.resizeSection(column, width)
+        # Get the player ID from the database
+        
+        
+        player_career_data = api.get_player_career_stats(id)
+        dialog = Player_Window(id, player_career_data)
+        dialog = Player_Window(player_career_data)
+        self.dialogs.append(dialog)
+        dialog.show()
+    
+    def get_selected_player(self):
+        rows = self.table_player_stats.selectionModel().selectedRows()
+        print(self.table_player_stats.model().index(rows[0].row(), 0).data())
+        return self.table_player_stats.model().index(rows[0].row(), 0).data(), self.table_player_stats.model().index(rows[0].row(), 1).data()
                         
 if __name__ == "__main__":
     import sys

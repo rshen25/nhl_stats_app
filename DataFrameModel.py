@@ -30,8 +30,6 @@ class DataFrameModel(QtCore.QAbstractTableModel):
         return QtCore.QVariant()
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        if parent.isValid():
-            return 0
         return len(self._dataframe.index)
 
     def columnCount(self, parent=QtCore.QModelIndex()):
@@ -40,21 +38,10 @@ class DataFrameModel(QtCore.QAbstractTableModel):
         return self._dataframe.columns.size
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
-        if not index.isValid() or not (0 <= index.row() < self.rowCount() \
-            and 0 <= index.column() < self.columnCount()):
-            return QtCore.QVariant()
-        row = self._dataframe.index[index.row()]
-        col = self._dataframe.columns[index.column()]
-        dt = self._dataframe[col].dtype
-
-        val = self._dataframe.iloc[row][col]
-        if role == QtCore.Qt.DisplayRole:
-            return str(val)
-        elif role == DataFrameModel.ValueRole:
-            return val
-        if role == DataFrameModel.DtypeRole:
-            return dt
-        return QtCore.QVariant()
+        if index.isValid():
+            if role == QtCore.Qt.DisplayRole:
+                return str(self._dataframe.iloc[index.row(), index.column()])
+            return None
 
     def roleNames(self):
         roles = {

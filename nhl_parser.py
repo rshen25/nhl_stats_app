@@ -206,7 +206,9 @@ def parse_player_career_stats(player_stats):
                             'PPG', 'PPP', 'SHG', 'SHP', 'GWG', 'OTG', 'S', 'S%', 'Hits', 'Blk']
     career_stats = career_stats.sort_values(by=['Season'], ascending=False)
     
-    career_stats.to_csv('test_career_stats.csv')
+    career_stats = career_stats.fillna('')
+    
+#    career_stats.to_csv('test_career_stats.csv')
     return career_stats
 
 # Parses the data for each scheduled NHL game for the current day

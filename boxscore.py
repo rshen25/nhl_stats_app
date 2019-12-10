@@ -15,6 +15,7 @@ class boxscore():
         self.home_team = boxscore_data['gameData']['teams']['home']['name']
         
         self.away_team_stats = boxscore_data['liveData']['boxscore']['teams']['away']['teamStats']['teamSkaterStats']
+        print(self.away_team_stats)
         self.home_team_stats = boxscore_data['liveData']['boxscore']['teams']['home']['teamStats']['teamSkaterStats']
         
         self.away_player_stats, self.home_player_stats = self.parse_player_stats(boxscore_data)
@@ -59,20 +60,22 @@ class boxscore():
                         'stats.skaterStats.shortHandedAssists', 'stats.skaterStats.blocked', 
                         'stats.goalieStats.timeOnIce', 'stats.goalieStats.saves', 'stats.goalieStats.savePercentage',
                         'stats.goalieStats.goals', 'stats.goalieStats.assists',
-                        'stats.goalieStats.pim', 'stats.goalieStats.decision']
+                        'stats.goalieStats.pim']
         
         away_player_stats = away_player_stats[stats_wanted].copy()
         home_player_stats = home_player_stats[stats_wanted].copy()
         
         stats_renamed = ['Name', 'Number', 'Handed', 'Pos', 'G', 'A', '+/-', 'TOI', 'Shots',
                          'Hits', 'PPG', 'PPA', 'PIM', 'Takeaways', 'Giveaways', 'FO', 'FO%', 'SHG', 'SHA', 'Blocks', 'Goalie_TOI', 
-                         'Goalie_Saves', 'Goalie_Save%', 'Goalie_Goals', 'Goalie_Assists', 'Goalie_PIM', 'Goalie_Decision']
+                         'Goalie_Saves', 'Goalie_Save%', 'Goalie_Goals', 'Goalie_Assists', 'Goalie_PIM']
         
         away_player_stats.columns = stats_renamed
         home_player_stats.columns = stats_renamed
         
+        away_player_stats = away_player_stats.fillna('')
+        home_player_stats = home_player_stats.fillna('')
+        
         return away_player_stats, home_player_stats
-    
     
     def get_away_score(self):
         return self.away_team_stats['goals']
@@ -80,10 +83,10 @@ class boxscore():
     def get_home_score(self):
         return self.home_team_stats['goals']
     
-    def get_away_team_stats(self):
+    def get_away_team_stats(self, boxscore_data):
         return self.away_team_stats
     
-    def get_home_team_stats(self):
+    def get_home_team_stats(self, boxscore_data):
         return self.home_team_stats
     
     def get_goals(self):

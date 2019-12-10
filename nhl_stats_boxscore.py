@@ -21,14 +21,12 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         self.table_home_stats.setObjectName("table_home_stats")
         home_model = DataFrameModel(self.boxscore_data.home_player_stats)
         self.table_home_stats.setModel(home_model)
-        self.change_table_style(self.table_home_stats)
         
         self.table_away_stats = CustomTable(self.centralwidget)
         self.table_away_stats.setGeometry(QtCore.QRect(10, 440, 651, 261))
         self.table_away_stats.setObjectName("table_away_stats")
         away_model = DataFrameModel(self.boxscore_data.away_player_stats)
         self.table_away_stats.setModel(away_model)
-        self.change_table_style(self.table_away_stats)
         
         self.label_away_team_name = QtWidgets.QLabel(self.centralwidget)
         self.label_away_team_name.setGeometry(QtCore.QRect(10, 395, 101, 31))
@@ -106,7 +104,7 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         
         # Create the team stats
         for stats in self.boxscore_data.away_team_stats:
-            print("Away Team Stats: " + stats)
+#            print("Away Team Stats: " + stats[1])
             label = QtWidgets.QLabel()
             label.setText(str(stats))
             self.grid_away_team_stats.addWidget(label)
@@ -124,13 +122,13 @@ class Boxscore_Window(QtWidgets.QMainWindow):
             label.setText(goals)
             self.layout_goals_display.addWidget(label)
 
-    def change_table_style(self, table):
-        header = table.horizontalHeader()
-        header.setStyleSheet("""::section{background-color: rgb(56,56,56);
-                                        color: white;}""")
-        vertical = table.verticalHeader()
-        vertical.setStyleSheet("""::section{background-color: rgb(56,56,56);
-                                        color: white;}""")
-        table.setStyleSheet("background-color:rgb(212, 213, 214);alternate-background-color:rgb(165, 171, 181);")
-        
+#    def change_table_style(self, table):
+#        header = table.horizontalHeader()
+#        header.setStyleSheet("""::section{background-color: rgb(56,56,56);
+#                                        color: white;}""")
+#        vertical = table.verticalHeader()
+#        vertical.setStyleSheet("""::section{background-color: rgb(56,56,56);
+#                                        color: white;}""")
+#        table.setStyleSheet("background-color:rgb(212, 213, 214);alternate-background-color:rgb(165, 171, 181);")
+#        
        
