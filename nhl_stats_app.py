@@ -9,6 +9,19 @@ from functools import partial
 from nhl_stats_player_info import Player_Window
 from custom_table import CustomTable
 
+# Load team ids on init
+teams = {}
+
+PLAYER_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
+                        'Weight', 'Country', 'Number', 'Shoots', 'Position', 'Games_Played',
+                        'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
+                        'GWG', 'OTG', 'S' , 'Shot_Percent', 'Blk', 'FO_Percent', 'Hits']
+
+GOALIE_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
+                        'Weight', 'Country', 'Number', 'Catches', 'Position', 'Games_Played',
+                        'Games_Started', 'Wins', 'Losses', 'OT', 'Shutouts', 'Saves', 'Save_Percentage',
+                        'GAA', 'GA', 'SA']
+
 class NHL_MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(NHL_MainWindow, self).__init__(*args, **kwargs)
@@ -53,9 +66,9 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_player_details.setGeometry(QtCore.QRect(1110, 330, 75, 23))
         self.btn_player_details.setObjectName("pushButton_4")
         
-        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_5.setGeometry(QtCore.QRect(1030, 330, 75, 23))
-        self.pushButton_5.setObjectName("pushButton_5")
+        self.btn_goalie_details = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_goalie_details.setGeometry(QtCore.QRect(1030, 330, 75, 23))
+        self.btn_goalie_details.setObjectName("pushButton_5")
         
         self.table_west_standings = CustomTable(self.centralwidget)
         self.table_west_standings.setGeometry(QtCore.QRect(10, 610, 581, 311))
@@ -106,6 +119,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         
         # Set up the more player details button
         self.btn_player_details.clicked.connect(self.open_player_info)
+        self.btn_goalie_details.clicked.connect(self.open_goalie_info)
         
         self.db.close()
         
@@ -123,9 +137,9 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_update_goalie_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_standings.setText(_translate("MainWindow", "Update"))
         self.btn_player_details.setText(_translate("MainWindow", "More Player Details"))
-        self.pushButton_5.setText(_translate("MainWindow", "PushButton"))
-        
-
+        self.btn_goalie_details.setText(_translate("MainWindow", "More Goalie Details"))
+    
+    # Creates a connection to the nhl stats database
     def create_connection(self):
         db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
         db.setDatabaseName("nhl_stats.db")
@@ -197,7 +211,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         for index, row in self.games.iterrows():
             # Create a button, edit the text to be Away @ Home
             # TODO: reminder to change it to team abbreviations
-            self.button = QtWidgets.QPushButton("{} @ {}".format(row['awayID'], row['homeID']))
+            self.button = QtWidgets.QPushButton("{} @ {}".format(teams[row['awayID']], teams[row['homeID']]))
             self.button.clicked.connect(partial(self.open_boxscore, index))
             layout.addWidget(self.button)
             
@@ -220,48 +234,50 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
                   """, (player_name, team))
         id = c.fetchone()
         id = id[0]
-        
-#        c.execute(""" SELECT Full_Name, Team_Name, Position, Games_Played, 
-#                  Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG,
-#                  SHP, GWG, OTG, S, Shot_Percent, Blk, FO_Percent, Hits 
-#                  FROM players WHERE Player_ID = (?) """, (id,))
-#        
-#        player_data = c.fetchone()
-#        print(player_data)
-        
+                
         player_career_data = api.get_player_career_stats(str(id))
-        dialog = Player_Window(id, player_career_data)
-#        dialog = Player_Window(player_career_data)
+        dialog = Player_Window(id, player_career_data, False)
+        self.dialogs.append(dialog)
+        dialog.show()
+        
+    # Opens the goalie info dialog window to display more details about the goalie
+    def open_goalie_info(self):
+        # Get the player name
+        goalie_name, team = self.get_selected_goalie()
+        print(goalie_name)
+        print(team)
+        
+        # Get the player ID from the database
+        c = self.conn.cursor()
+        
+        c.execute(""" SELECT Player_ID FROM goalies
+                  WHERE Full_Name = (?) AND Team_Name = (?)
+                  """, (goalie_name, team))
+        id = c.fetchone()
+        id = id[0]
+        print(id)
+                
+        goalie_career_data = api.get_goalie_career_stats(str(id))
+        dialog = Player_Window(id, goalie_career_data, True)
         self.dialogs.append(dialog)
         dialog.show()
     
+    # Gets the player name and the team name from the player stats table
     def get_selected_player(self):
         rows = self.table_player_stats.selectionModel().selectedRows()
-#        print(self.table_player_stats.model().index(rows[0].row(), 0).data())
         return self.table_player_stats.model().index(rows[0].row(), 0).data(), self.table_player_stats.model().index(rows[0].row(), 1).data()
+    
+    # Gets the goalie name and team name from the goalie stats table
+    def get_selected_goalie(self):
+        rows = self.table_goalie_stats.selectionModel().selectedRows()
+        return self.table_goalie_stats.model().index(rows[0].row(), 0).data(), self.table_goalie_stats.model().index(rows[0].row(), 1).data()
                         
     def closeEvent(self, event):
         super(NHL_MainWindow, self).closeEvent(event)
         self.db.close()
-        
-
-
-# Load team ids on init
-teams = {}
-
-PLAYER_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
-                        'Weight', 'Country', 'Number', 'Shoots', 'Position', 'Games_Played',
-                        'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
-                        'GWG', 'OTG', 'S' , 'Shot_Percent', 'Blk', 'FO_Percent', 'Hits']
-
-GOALIE_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
-                        'Weight', 'Country', 'Number', 'Catches', 'Position', 'Games_Played',
-                        'Games_Started', 'Wins', 'Losses', 'OT', 'Shutouts', 'Saves', 'Save_Percentage',
-                        'GAA', 'GA', 'SA']
 
 def init_program():    
     print(teams)
-
 
 # Saves all player ids for every team
 def get_and_save_player_ids():
@@ -312,15 +328,12 @@ def get_player_stats():
         players = pd.DataFrame()
         for player_id in reader:
         # Request player stat from NHL API
-#            print(player_id['0'])
             result, isGoalie = api.get_player_stats(player_id['0'], '20192020')
             
             # Insert data into players database table
             if (isGoalie):
-#                result = result.to_sql('tmp_goalies', con=conn, if_exists='append', index=False)
                 goalies = pd.concat([result, goalies], ignore_index=True)
             else:
-#                result = result.to_sql('tmp_players', con=conn, if_exists='append', index=False)
                 players = pd.concat([result, players], ignore_index=True)
         
         goalies.to_sql('tmp_goalies', con=conn, if_exists='append', index=False)
@@ -368,7 +381,7 @@ if __name__ == "__main__":
         db.create_goalies_table(conn)
     conn.close()
     
-#    get_team_stats()
+    get_team_stats()
     create_teams_dict()
     
 #    c = conn.cursor()

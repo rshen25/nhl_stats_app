@@ -9,46 +9,6 @@ import nhl_parser as parse
 BASE = "https://statsapi.web.nhl.com/api/v1"
 RECORDS_BASE = "https://records.nhl.com/site/api"
 
-#
-def get_conference(id):
-    result = requests.get("{}/conferences/{}".format(BASE, id)).json()
-    result = json.dumps(result, sort_keys=True, indent=4)
-    result = pd.read_json(result)
-    return result
-
-def get_conferences():
-    result = requests.get("{}/conferences/".format(BASE)).json()
-    return result
-
-def get_division(id):
-    result = requests.get("{}/divisions/{}".format(BASE, id)).json()
-    return result
-
-
-def get_divisions():
-    result = requests.get("{}/divisions/{}".format(BASE, "")).json()
-    return result
-
-
-def get_franchise(id):
-    result = requests.get("{}/franchises/{}".format(BASE, id)).json()
-    return result
-
-
-def get_franchises():
-    result = requests.get("{}/franchises/{}".format(BASE, "")).json()
-    return result
-
-
-def get_game(id):
-    result = requests.get("{}/game/{}/feed/live".format(BASE, id)).json()
-    return result
-
-
-def get_player(id):
-    result = requests.get("{}/people/{}".format(BASE, id)).json()
-    return result
-
 def get_players(ids):
     result = requests.get("{}/people/".format(BASE)).json()
 #    result = pd.read_json(result)
@@ -155,7 +115,18 @@ def get_player_career_stats(player_id):
         # Parse the data to include only stats that we want
         result = parse.parse_player_career_stats(player_stats)
     return result
-    
+
+# Gets the career stats for a goalie via the NHL API, parses it so that it contains desired statistics
+# and returns in a pandas DataFrame
+def get_goalie_career_stats(player_id):
+    response = requests.get("{}/people/{}/stats?stats=yearByYear".format(BASE, player_id))
+    print(response.status_code)
+    if response.status_code == 200:
+        player_stats = response.json()
+        # Parse the data to include only stats that we want
+        result = parse.parse_goalie_career_stats(player_stats)
+    return result
+
 # Requests for the current scheduled NHL games for the day and returns it in a pandas DataFrame format
 def get_current_games():
     response = requests.get("{}/schedule".format(BASE))

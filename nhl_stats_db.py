@@ -60,7 +60,7 @@ def create_players_table(conn):
         c.execute(sql_create_players_table)
     except Error as e:
         print(e)
-    
+
 # Create a goalie table
 def create_goalies_table(conn):
     sql_create_goalies_table = """ CREATE TABLE IF NOT EXISTS goalies ([Player_ID] INTEGER PRIMARY KEY, 

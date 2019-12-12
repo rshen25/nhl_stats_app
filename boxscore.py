@@ -15,7 +15,6 @@ class boxscore():
         self.home_team = boxscore_data['gameData']['teams']['home']['name']
         
         self.away_team_stats = boxscore_data['liveData']['boxscore']['teams']['away']['teamStats']['teamSkaterStats']
-        print(self.away_team_stats)
         self.home_team_stats = boxscore_data['liveData']['boxscore']['teams']['home']['teamStats']['teamSkaterStats']
         
         self.away_player_stats, self.home_player_stats = self.parse_player_stats(boxscore_data)
@@ -39,41 +38,76 @@ class boxscore():
         away_player_stats = pd.DataFrame()
         home_player_stats = pd.DataFrame()
         
-        # Get away player stats
-        for player in boxscore_data['liveData']['boxscore']['teams']['away']['players']:
-            tmp = json_normalize(boxscore_data['liveData']['boxscore']['teams']['away']['players'][player])
-            away_player_stats = pd.concat([tmp, away_player_stats], ignore_index=True, sort=False)
-
-        # Get home player stats
-        for player in boxscore_data['liveData']['boxscore']['teams']['home']['players']:
-            tmp = json_normalize(boxscore_data['liveData']['boxscore']['teams']['home']['players'][player])
-            home_player_stats = pd.concat([tmp, home_player_stats], ignore_index=True, sort=False)
+        if len(boxscore_data['liveData']['boxscore']['teams']['away']['players']) != 0:
+            
+            # Get away player stats
+            for player in boxscore_data['liveData']['boxscore']['teams']['away']['players']:
+                tmp = json_normalize(boxscore_data['liveData']['boxscore']['teams']['away']['players'][player])
+                away_player_stats = pd.concat([tmp, away_player_stats], ignore_index=True, sort=False)
+    
+            # Get home player stats
+            for player in boxscore_data['liveData']['boxscore']['teams']['home']['players']:
+                tmp = json_normalize(boxscore_data['liveData']['boxscore']['teams']['home']['players'][player])
+                home_player_stats = pd.concat([tmp, home_player_stats], ignore_index=True, sort=False)
         
-#        home_player_stats.to_csv('home_player_stats.csv')
-#        away_player_stats.to_csv('away_player_stats.csv')
-        stats_wanted = ['person.fullName', 'jerseyNumber', 'person.shootsCatches', 'position.abbreviation',
-                        'stats.skaterStats.goals', 'stats.skaterStats.assists', 'stats.skaterStats.plusMinus', 
-                        'stats.skaterStats.timeOnIce', 'stats.skaterStats.shots', 'stats.skaterStats.hits', 
-                        'stats.skaterStats.powerPlayGoals', 'stats.skaterStats.powerPlayAssists', 
-                        'stats.skaterStats.penaltyMinutes', 'stats.skaterStats.takeaways', 'stats.skaterStats.giveaways', 
-                        'stats.skaterStats.faceoffTaken', 'stats.skaterStats.faceOffPct', 'stats.skaterStats.shortHandedGoals', 
-                        'stats.skaterStats.shortHandedAssists', 'stats.skaterStats.blocked', 
-                        'stats.goalieStats.timeOnIce', 'stats.goalieStats.saves', 'stats.goalieStats.savePercentage',
-                        'stats.goalieStats.goals', 'stats.goalieStats.assists',
-                        'stats.goalieStats.pim']
         
-        away_player_stats = away_player_stats[stats_wanted].copy()
-        home_player_stats = home_player_stats[stats_wanted].copy()
-        
-        stats_renamed = ['Name', 'Number', 'Handed', 'Pos', 'G', 'A', '+/-', 'TOI', 'Shots',
-                         'Hits', 'PPG', 'PPA', 'PIM', 'Takeaways', 'Giveaways', 'FO', 'FO%', 'SHG', 'SHA', 'Blocks', 'Goalie_TOI', 
-                         'Goalie_Saves', 'Goalie_Save%', 'Goalie_Goals', 'Goalie_Assists', 'Goalie_PIM']
-        
-        away_player_stats.columns = stats_renamed
-        home_player_stats.columns = stats_renamed
-        
-        away_player_stats = away_player_stats.fillna('')
-        home_player_stats = home_player_stats.fillna('')
+            stats_wanted = ['person.fullName', 'jerseyNumber', 'person.shootsCatches', 'position.abbreviation',
+                            'stats.skaterStats.goals', 'stats.skaterStats.assists', 'stats.skaterStats.plusMinus', 
+                            'stats.skaterStats.timeOnIce', 'stats.skaterStats.shots', 'stats.skaterStats.hits', 
+                            'stats.skaterStats.powerPlayGoals', 'stats.skaterStats.powerPlayAssists', 
+                            'stats.skaterStats.penaltyMinutes', 'stats.skaterStats.takeaways', 'stats.skaterStats.giveaways', 
+                            'stats.skaterStats.faceoffTaken', 'stats.skaterStats.faceOffPct', 'stats.skaterStats.shortHandedGoals', 
+                            'stats.skaterStats.shortHandedAssists', 'stats.skaterStats.blocked', 
+                            'stats.goalieStats.timeOnIce', 'stats.goalieStats.saves', 'stats.goalieStats.savePercentage',
+                            'stats.goalieStats.goals', 'stats.goalieStats.assists',
+                            'stats.goalieStats.pim']
+            try:
+                away_player_stats = away_player_stats[stats_wanted].copy()
+                home_player_stats = home_player_stats[stats_wanted].copy()
+                
+                stats_renamed = ['Name', 'Number', 'Handed', 'Pos', 'G', 'A', '+/-', 'TOI', 'Shots',
+                                 'Hits', 'PPG', 'PPA', 'PIM', 'Takeaways', 'Giveaways', 'FO', 'FO%', 'SHG', 'SHA', 'Blocks', 'Goalie_TOI', 
+                                 'Goalie_Saves', 'Goalie_Save%', 'Goalie_Goals', 'Goalie_Assists', 'Goalie_PIM']
+                
+                away_player_stats.columns = stats_renamed
+                home_player_stats.columns = stats_renamed
+                
+                away_player_stats = away_player_stats.sort_values(by=['G', 'A'])
+                home_player_stats = home_player_stats.sort_values(by=['G', 'A'])
+                
+                away_player_stats = away_player_stats.fillna('')
+                home_player_stats = home_player_stats.fillna('')
+            except KeyError as e:
+                try:
+                    stats_wanted = ['person.fullName', 'jerseyNumber', 'person.shootsCatches', 'position.abbreviation',
+                    'stats.skaterStats.goals', 'stats.skaterStats.assists', 'stats.skaterStats.plusMinus', 
+                    'stats.skaterStats.timeOnIce', 'stats.skaterStats.shots', 'stats.skaterStats.hits', 
+                    'stats.skaterStats.powerPlayGoals', 'stats.skaterStats.powerPlayAssists', 
+                    'stats.skaterStats.penaltyMinutes', 'stats.skaterStats.takeaways', 'stats.skaterStats.giveaways', 
+                    'stats.skaterStats.faceoffTaken', 'stats.skaterStats.shortHandedGoals', 
+                    'stats.skaterStats.shortHandedAssists', 'stats.skaterStats.blocked', 
+                    'stats.goalieStats.timeOnIce', 'stats.goalieStats.saves',
+                    'stats.goalieStats.goals', 'stats.goalieStats.assists',
+                    'stats.goalieStats.pim']
+                    away_player_stats = away_player_stats[stats_wanted].copy()
+                    home_player_stats = home_player_stats[stats_wanted].copy()
+                    
+                    stats_renamed = ['Name', 'Number', 'Handed', 'Pos', 'G', 'A', '+/-', 'TOI', 'Shots',
+                                     'Hits', 'PPG', 'PPA', 'PIM', 'Takeaways', 'Giveaways', 'FO', 'SHG', 'SHA', 'Blocks', 'Goalie_TOI', 
+                                     'Goalie_Saves', 'Goalie_Goals', 'Goalie_Assists', 'Goalie_PIM']
+                    
+                    away_player_stats.columns = stats_renamed
+                    home_player_stats.columns = stats_renamed
+                    
+                    away_player_stats = away_player_stats.sort_values(by=['G', 'A'])
+                    home_player_stats = home_player_stats.sort_values(by=['G', 'A'])
+                    
+                    away_player_stats = away_player_stats.fillna('')
+                    home_player_stats = home_player_stats.fillna('')
+                except KeyError as e:
+                    print(e)
+                #TODO: Add Preview.
+                print(e)
         
         return away_player_stats, home_player_stats
     
@@ -83,10 +117,10 @@ class boxscore():
     def get_home_score(self):
         return self.home_team_stats['goals']
     
-    def get_away_team_stats(self, boxscore_data):
+    def get_away_team_stats(self):
         return self.away_team_stats
     
-    def get_home_team_stats(self, boxscore_data):
+    def get_home_team_stats(self):
         return self.home_team_stats
     
     def get_goals(self):
@@ -100,8 +134,11 @@ if __name__ == "__main__":
     # for testing
     with open('live.json', 'r') as boxscore_file:
         boxscore_data = json.load(boxscore_file)
-    boxscore_ = boxscore(0, 0, boxscore_data)
+    boxscore_ = boxscore(boxscore_data)
     for index, goals in enumerate(boxscore_.goals):
         print(goals + " " + boxscore_.goals_time[index])
+        
+    for k in boxscore_.get_away_team_stats():
+        print(k + " : " + boxscore_.get_away_team_stats()[k])
     
     

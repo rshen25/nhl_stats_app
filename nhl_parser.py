@@ -208,8 +208,31 @@ def parse_player_career_stats(player_stats):
     
     career_stats = career_stats.fillna('')
     
+    return career_stats
+
+def parse_goalie_career_stats(player_stats):
+    career_stats = pd.DataFrame()
+    for stats in player_stats['stats'][0]['splits']:
+        tmp = json_normalize(stats)
+        career_stats = pd.concat([career_stats, tmp], ignore_index=True, sort=False)
+
+    career_stats = career_stats[['season', 'league.name', 'team.name','stat.games', 'stat.gamesStarted', 'stat.wins',
+                                 'stat.losses', 'stat.ot', 'stat.ties', 'stat.goalAgainstAverage', 'stat.goalsAgainst',
+                                 'stat.timeOnIce', 'stat.shutouts', 'stat.saves', 'stat.savePercentage', 
+                                 'stat.powerPlaySaves', 'stat.powerPlayShots', 'stat.powerPlaySavePercentage', 
+                                 'stat.shortHandedSaves', 'stat.shortHandedShots', 'stat.shortHandedSavePercentage',
+                                 'stat.evenSaves', 'stat.evenShots', 'stat.evenStrengthSavePercentage']].copy()  
+    
+    career_stats.columns = ['Season', 'League', 'Team', 'GP', 'GS', 'W', 'L', 'OT', 'Ties',
+                            'GAA', 'GA', 'TOI', 'Shutouts', 'Saves', 'Save%', 'ppSaves', 'ppShots',
+                            'ppSave%', 'shSaves', 'shShots', 'shSave%', 'evenSaves', 'evenShots', 'evenSave%']
+    career_stats = career_stats.sort_values(by=['Season'], ascending=False)
+    
+    career_stats = career_stats.fillna('')
+    
 #    career_stats.to_csv('test_career_stats.csv')
     return career_stats
+    
 
 # Parses the data for each scheduled NHL game for the current day
 def parse_games(games_data):

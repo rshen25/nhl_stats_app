@@ -3,12 +3,11 @@ from custom_table import CustomTable
 from DataFrameModel import DataFrameModel
 
 class Player_Window(QtWidgets.QMainWindow):        
-#    def __init__(self, player_career_data):
-    def __init__(self, player_id, player_career_data):
+    def __init__(self, player_id, player_career_data, isGoalie):
         super(Player_Window, self).__init__()
         self.player_id = player_id
+        self.isGoalie = isGoalie
         self.player_career_data = player_career_data
-        print(player_career_data)
         self.setupUi()
         
     def setupUi(self):
@@ -91,6 +90,8 @@ class Player_Window(QtWidgets.QMainWindow):
         self.db = self.create_connection()
         
         self.set_current_season_table(self.player_id)
+        
+        self.display_player_info()
 
     def retranslateUi(self, MainWindow, player_data):
         _translate = QtCore.QCoreApplication.translate
@@ -112,10 +113,18 @@ class Player_Window(QtWidgets.QMainWindow):
     # queries the database and populates the current season stats table
     def set_current_season_table(self, player_id):
         model = QtSql.QSqlQueryModel()
-        model.setQuery("""
-                       SELECT * FROM players
-                       WHERE Player_ID = {}
-                       """.format(player_id))
+        if self.isGoalie:
+            model.setQuery("""
+                           SELECT Games_Played, Games_Started, Wins, Losses,
+                              OT, Shutouts, Saves, Save_Percentage, GAA, GA, SA FROM goalies
+                           WHERE Player_ID = {}
+                           """.format(player_id))
+        else:
+            model.setQuery("""
+                           SELECT Games_Played, Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG,
+                           SHP, GWG, OTG, S, Shot_Percent, Blk, FO_Percent, Hits FROM players
+                           WHERE Player_ID = {}
+                           """.format(player_id))
         self.table_season_stats.setModel(model)
 
     # Create a connection to the database
@@ -132,6 +141,31 @@ class Player_Window(QtWidgets.QMainWindow):
             return False
         
         return db
+    
+    # Populates and displays the player information such as name, age, team, etc.
+    def display_player_info(self):
+        query = QtSql.QSqlQuery()
+        if self.isGoalie:
+            query.exec_("""SELECT Full_Name, Team_Name, Age, Height, Weight, Country, 
+                        Number, Catches, Position FROM goalies WHERE Player_ID = {}
+                        """.format(self.player_id))
+        
+        else:
+            query.exec_("""SELECT Full_Name, Team_Name, Age, Height, Weight, Country, 
+                        Number, Shoots, Position FROM players WHERE Player_ID = {}
+                        """.format(self.player_id))
+        query.first()
+        # Set label names
+        self.label_player_name.setText(str(query.value(0)))
+        self.label_player_team.setText(str(query.value(1)))
+        self.label_player_age.setText("Age: " + str(query.value(2)))
+        self.label_player_height.setText("Height: " + str(query.value(3)))
+        self.label_player_weight.setText("Weight: " + str(query.value(4)))
+        self.label_player_birthplace.setText("Country: " + str(query.value(5)))
+        self.label_player_number.setText("Number: " + str(query.value(6)))
+        self.label_player_shoots.setText("Handed: " + str(query.value(7)))
+        self.label_player_position.setText("Position: " + str(query.value(8)))
+            
     
     # Close event to close the database connection when window is closed
     def closeEvent(self, event):
