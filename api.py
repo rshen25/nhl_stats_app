@@ -19,10 +19,7 @@ def get_team(id):
     return result
     
 def get_all_team_stats():
-        #for testing purposes we will just use the file
         result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
-#        with open('data.json', 'r') as json_file:
-#            result = json.load(json_file)
         result = parse.parse_teams(result)
         return result
     
@@ -44,26 +41,25 @@ def get_standings():
 def get_player_ids_from_team(team_id):    
     
     #TESTING PURPOSES -----------------------------
-    with open('test_roster.json', 'r') as json_file:
-        response = json.load(json_file)
-        #print(response['data'][0]['id'])
-        #response = response.json()
-        result = parse.parse_player_ids(response)
-        result.to_csv("test_players.csv".format(team_id))
+#    with open('test_roster.json', 'r') as json_file:
+#        response = json.load(json_file)
+#        #print(response['data'][0]['id'])
+#        #response = response.json()
+#        result = parse.parse_player_ids(response)
+#        result.to_csv("test_players.csv".format(team_id))
 #       json.dump(response, json_file, sort_keys=True, indent=4)
-        return result
+#        return result
     
     #----------------------------------------------
     
-#    response = requests.get("{}/teams/{}/roster".format(BASE, team_id))
+    response = requests.get("{}/teams/{}/roster".format(BASE, team_id))
 #    print(response.status_code)
-#    if (response.status_code == 200):
-#        response = response.json()
-#        result = parse.parse_player_ids(response)
-#        result.to_csv("resources/player_ids/{}_players.csv".format(team_id))
-#        return result
-#    else:
-#        return None
+    if (response.status_code == 200):
+        response = response.json()
+        result = parse.parse_player_ids(response)
+        return result
+    else:
+        return None
     
     
 #    response = requests.get("{}/player/byTeam/{}".format(RECORDS_BASE, team_id))
@@ -146,3 +142,28 @@ def get_live_game_feed(id):
         return result
     else:
         return None
+
+# Requests the NHL api to get the player stats in json form
+# input - a pandas dataframe of the player ids
+# output - two dataframes, one for players, the other for goalies
+#def get_all_player_season_stats(player_ids, season):
+#    player_data_response = list()
+#    player_stats_response = list()
+#    for id in player_ids.itertuples():
+#        response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season={}".format(BASE, id[0], season))
+#        
+#        if response.status_code == 200:
+#            player_stats_response.append(response.json())
+#            
+#        response = response = requests.get("{}/people/{}".format(BASE, id[0]))
+#        if response.status_code == 200:
+#            player_data_response.append(response.json())
+#        
+#            
+#    player_stats = None
+#    goalie_stats = None
+#    
+#    if len(player_data_response) > 0 and len(player_stats_response) > 0:
+#        player_stats, goalie_stats = parse.parse_all_player_stats(player_data_response, player_stats_response)
+#    
+#    return player_stats, goalie_stats

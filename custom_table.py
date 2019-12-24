@@ -4,8 +4,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets, QtSql
 class CustomTable(QtWidgets.QTableView):
     def __init__(self,  *args, **kwargs):
         super(CustomTable, self).__init__(*args, **kwargs)
-        self.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
         self.change_table_style()
+        self.setSelectionBehavior(QtWidgets.QTableView.SelectRows)
     
     def resizeEvent(self, event):
         super(QtWidgets.QTableView, self).resizeEvent(event)

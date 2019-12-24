@@ -1,10 +1,5 @@
 import sqlite3
 from sqlite3 import Error          
-import sqlalchemy as db
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Float
-
-Base = declarative_base()
 
 def create_connection(db_file):
     conn = None
@@ -14,25 +9,8 @@ def create_connection(db_file):
     except Error as e:
         print(e)
     return conn
-    
-#    engine = None
-##    conn = None
-#    try:
-#        engine = db.create_engine('sqlite:///{}')
-#        return engine
-#    except Error as e:
-#        print(e)
-#    return engine
 
-def create_engine(db_file):
-    engine = None
-    try:
-        engine = db.create_engine('sqlite:///{}'.format(db_file))
-    except Error as e:
-        print(e)
-    return engine
-
-# Create Tables to hold team and player stats
+# Create Tables to hold team stats
 def create_teams_table(conn):
     
     sql_create_teams_table = """ CREATE TABLE IF NOT EXISTS teams
@@ -46,7 +24,8 @@ def create_teams_table(conn):
         c.execute(sql_create_teams_table)
     except Error as e:
         print(e)
-        
+
+# Create the table to hold player stats
 def create_players_table(conn):
     sql_create_players_table =  """ CREATE TABLE IF NOT EXISTS players
           ([Player_ID] INTEGER PRIMARY KEY, [Full_Name] TEXT, [Team_ID] INTEGER, [Team_Name] TEXT, [Age] INTEGER, 

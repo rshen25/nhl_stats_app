@@ -1,5 +1,5 @@
 import pandas as pd
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
 
 # Taken from https://stackoverflow.com/questions/44603119/how-to-display-a-pandas-data-frame-with-pyqt5-pyside2
 class DataFrameModel(QtCore.QAbstractTableModel):

@@ -1,6 +1,5 @@
 import pandas as pd
 from pandas.io.json import json_normalize
-import json
 
 TEAM_STATS_WANTED = ['team.id', 'team.name', 'stat.gamesPlayed', 'stat.wins', 'stat.losses', 'stat.ot',
                 'stat.pts', 'stat.goalsPerGame', 'stat.goalsAgainstPerGame', 
@@ -126,11 +125,6 @@ def get_standing_stats(division_json):
 
 # Given a json data of all players within a team, get all player ids within the team
 def parse_player_ids(team_player_data):
-#    player_ids = []
-#    for k in team_player_data['data']:
-#        player_ids.append(k['id'])
-#    player_ids = pd.DataFrame(player_ids)
-#    return player_ids
     del team_player_data['copyright']
     player_ids = []
     player_names = []
@@ -229,8 +223,7 @@ def parse_goalie_career_stats(player_stats):
     career_stats = career_stats.sort_values(by=['Season'], ascending=False)
     
     career_stats = career_stats.fillna('')
-    
-#    career_stats.to_csv('test_career_stats.csv')
+
     return career_stats
     
 
@@ -242,6 +235,44 @@ def parse_games(games_data):
     games = json_normalize(games_data['dates'][0]['games'])
     result = games[['gamePk', 'teams.away.team.id', 'teams.home.team.id']].copy()
     result.columns = ['gameID', 'awayID', 'homeID']
-#    games.to_csv('test_games.csv')
     
     return result
+
+# Parses through the json player data files, filters through to get the desired stats and returns them in a dataframe
+#def parse_all_player_stats(players_data, players_stats):
+#    player_stats = pd.DataFrame()
+#    player_data = pd.DataFrame()
+#    goalie_stats = pd.DataFrame()
+#    goalie_data = pd.DataFrame()
+#
+#    # parse player data
+#    for index, player in enumerate(players_data):
+#        if (player['primaryPosition.code'][0] == 'G'):
+#            goalie_data = pd.concat([goalie_data, json_normalize(player_data['people'])], ignore_index=True, sort=False)
+#            goalie_stats = pd.concat([goalie_stats, json_normalize(players_stats[index]['stats'][0]['splits'])], ignore_index=True, sort=False)
+#            
+#        else:
+#            player_data = pd.concat([player_data, json_normalize(player_data['people'])], ignore_index=True, sort=False)
+#            player_stats = pd.concat([player_stats, json_normalize(players_stats[index]['stats'][0]['splits'])], ignore_index=True, sort=False)
+#    
+#    # Filter out unwanted columns
+#    player_data = player_data[PLAYER_DATA_WANTED]
+#    goalie_data = goalie_data[PLAYER_DATA_WANTED]
+#    
+#    player_stats = player_stats[PLAYER_STATS_WANTED].copy()
+#    goalie_stats = goalie_stats[GOALIE_STATS_WANTED].copy()
+#        
+#    # Merge player data and stats
+#    goalie_stats = goalie_data.merge(goalie_stats, left_index=True, right_index=True)
+#    player_stats = player_data.merge(player_stats, left_index=True, right_index=True)
+#    
+#    # Rename columns
+#    goalie_stats.columns = GOALIE_STATS_RENAMED
+#    player_stats.columns = PLAYER_STATS_RENAMED
+#    
+#    # TESTING ---------------------------
+#    goalie_stats.to_csv("goalie_test.csv")
+#    player_stats.to_csv("player_test.csv")
+#    # ----------------------------------
+#    
+#    return player_stats, goalie_stats    
