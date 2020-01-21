@@ -9,6 +9,8 @@ import nhl_parser as parse
 BASE = "https://statsapi.web.nhl.com/api/v1"
 RECORDS_BASE = "https://records.nhl.com/site/api"
 
+STAT_LEADERS_BASE = "https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&sort=%5B%7B%22property%22:%22points%22,%22direction%22:%22DESC%22%7D%5D"
+
 def get_players(ids):
     result = requests.get("{}/people/".format(BASE)).json()
 #    result = pd.read_json(result)
@@ -128,8 +130,11 @@ def get_current_games():
     response = requests.get("{}/schedule".format(BASE))
     if response.status_code == 200:
         game_data = response.json()
-        result = parse.parse_games(game_data)
-        return result
+        if game_data['totalGames'] > 0:
+            result = parse.parse_games(game_data)
+            return result
+        else:
+            return None
     else:
         return None
 
@@ -142,6 +147,29 @@ def get_live_game_feed(id):
         return result
     else:
         return None
+
+
+def get_stat_leaders(season, page):
+    
+    # Testing ------------------------------------
+#    with open('summary.json', 'r') as data_file:
+#        data = json.load(data_file)
+#        result = parse.parse_stat_leaders(data)
+#    
+#    return result
+    # --------------------------------------------
+    
+    response = requests.get(
+            "{}&start={}&limit=100&factCayenneExp=gamesPlayed%3E=1&cayenneExp=gameTypeId=2%20and%20seasonId%3C={}%20and%20seasonId%3E={}"
+            .format(STAT_LEADERS_BASE, page * 100, season, season))
+    
+    if response.status_code == 200:
+        data = response.json()
+        result = parse.parse_stat_leaders(data)
+        return result
+    else:    
+        return None
+    
 
 # Requests the NHL api to get the player stats in json form
 # input - a pandas dataframe of the player ids

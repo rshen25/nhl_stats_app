@@ -38,6 +38,14 @@ GOALIE_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age',
                         'Games_Started', 'Wins', 'Losses', 'OT', 'Shutouts', 'Saves', 'Save_Percentage',
                         'GAA', 'GA', 'SA']
 
+STAT_LEADER_WANTED = ['playerId', 'skaterFullName', 'teamAbbrevs', 'positionCode', 'gamesPlayed', 'goals', 'assists',
+                      'points', 'plusMinus', 'penaltyMinutes', 'ppGoals', 'ppPoints', 'shGoals', 'shPoints', 'gameWinningGoals',
+                      'shots', 'shootingPct', 'faceoffWinPct']
+
+STAT_LEADER_RENAMED = ['Player_ID', 'Full_Name', 'Team_Abrv', 'Position', 'Games_Played',
+                        'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
+                        'GWG', 'S', 'Shot_Percent', 'FO_Percent']
+
 team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
              'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
              'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP_Percent', 'PK_Percent', 'Conference', 'Division']
@@ -183,6 +191,19 @@ def parse_player_stats(player_data, player_stats):
     # --------------------------------------------------
     
     return result, isGoalie
+
+def parse_stat_leaders(data):
+    try:
+        result = json_normalize(data['data'])
+        
+        result = result[STAT_LEADER_WANTED].copy()        
+        result.columns = STAT_LEADER_RENAMED
+        
+    except KeyError as e:
+        print(e)
+        return None
+    
+    return result
 
 def parse_player_career_stats(player_stats):
     career_stats = pd.DataFrame()

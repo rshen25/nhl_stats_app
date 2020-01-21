@@ -34,7 +34,8 @@ def init():
     get_team_stats()
     create_teams_dict()
     
-    get_player_stats()
+#    get_stat_leaders()
+#    get_player_stats()
 
 # Saves all player ids for every team
 def get_and_save_player_ids():
@@ -99,10 +100,7 @@ def get_player_stats():
         
 #        goalies.to_sql('tmp_goalies', con=conn, if_exists='append', index=False)
 #        players.to_sql('tmp_players', con=conn, if_exists='append', index=False)
-        
-        goalies.to_sql('goalies', con=conn, if_exists='replace', index=False)
-        players.to_sql('players', con=conn, if_exists='replace', index=False)
-        
+                
     except IOError as e:
         # Get all player ids from teams
         player_ids = get_and_save_player_ids()
@@ -124,27 +122,41 @@ def get_player_stats():
         print(e)
         
         
-    c = conn.cursor()
+#    c = conn.cursor()
         
-    c.execute("SELECT * FROM tmp_goalies")
-    rows = c.fetchall()
-    for row in rows:
-        conn.execute("""
-                     REPLACE INTO goalies({})
-                     VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?)
-                     """.format(','.join(GOALIE_STATS_RENAMED)),
-                     row)
-        
-    c.execute("SELECT * FROM tmp_players")
-    rows = c.fetchall()
-    for row in rows:
-        conn.execute("""
-                     REPLACE INTO players({})
-                     VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?)
-                     """.format(','.join(PLAYER_STATS_RENAMED)),
-                     row)
+#    c.execute("SELECT * FROM tmp_goalies")
+#    rows = c.fetchall()
+#    for row in rows:
+#        conn.execute("""
+#                     REPLACE INTO goalies({})
+#                     VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?)
+#                     """.format(','.join(GOALIE_STATS_RENAMED)),
+#                     row)
+#        
+#    c.execute("SELECT * FROM tmp_players")
+#    rows = c.fetchall()
+#    for row in rows:
+#        conn.execute("""
+#                     REPLACE INTO players({})
+#                     VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?)
+#                     """.format(','.join(PLAYER_STATS_RENAMED)),
+#                     row)
     conn.close()
 
+def get_stat_leaders():
+    conn = db.create_connection('nhl_stats.db')
+    
+    stat_leaders = pd.DataFrame()
+    for i in range(9):
+        result = api.get_stat_leaders('20192020', i)
+        stat_leaders = pd.concat([stat_leaders, result], ignore_index=True)
+    
+    print(stat_leaders)
+
+    stat_leaders.to_sql('players', con=conn, if_exists='replace', index=False)
+    
+    conn.close()
+    return None
 
 def create_teams_dict():
     conn = db.create_connection('nhl_stats.db')
