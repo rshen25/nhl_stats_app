@@ -24,6 +24,9 @@ PLAYER_DATA_WANTED = ['id', 'fullName', 'currentTeam.id', 'currentTeam.name', 'c
                       'height', 'weight', 'birthCountry', 'primaryNumber', 
                        'shootsCatches', 'primaryPosition.code']
 
+PLAYER_DATA_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
+                        'Weight', 'Country', 'Number', 'Shoots', 'Position']
+
 PLAYER_STATS_RENAMED = ['Player_ID', 'Full_Name', 'Team_ID', 'Team_Name', 'Age', 'Height',
                         'Weight', 'Country', 'Number', 'Shoots', 'Position', 'Games_Played',
                         'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
@@ -45,6 +48,13 @@ STAT_LEADER_WANTED = ['playerId', 'skaterFullName', 'teamAbbrevs', 'positionCode
 STAT_LEADER_RENAMED = ['Player_ID', 'Full_Name', 'Team_Abrv', 'Position', 'Games_Played',
                         'Goals', 'Assists', 'Points', 'Plus_Minus', 'PIM', 'PPG', 'PPP', 'SHG', 'SHP', 
                         'GWG', 'S', 'Shot_Percent', 'FO_Percent']
+
+GOALIE_LEADER_WANTED = ['playerId', 'goalieFullName', 'teamAbbrevs', 'shootsCatches', 'gamesPlayed', 'gamesStarted', 
+                        'wins', 'losses', 'otLosses', 'shutouts', 'shotsAgainst', 'saves', 'goalsAgainst', 'savePct',
+                        'goalsAgainstAverage', 'timeOnIce', 'goals', 'assists', 'points', 'penaltyMinutes']
+
+GOALIE_LEADER_RENAMED = ['Player_ID', 'Full_Name', 'Team_Abrv', 'Catches', 'GP', 'GS', 'W', 'L', 'OTL', 'SO', 'SA', 'Sv',
+                         'GA', 'SvPct', 'GAA', 'TOI', 'G', 'A', 'P', 'PIM']
 
 team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
              'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
@@ -144,54 +154,67 @@ def parse_player_ids(team_player_data):
     return result
 
 # Given the json data for a player, filter out unwanted stats and return in pandas Dataframe
-def parse_player_stats(player_data, player_stats):    
-    isGoalie = False
+#def parse_player_stats(player_data, player_stats):        
+#    # Get normalize the json data into pandas DataFrames
+#    player_stats = json_normalize(player_stats['stats'][0]['splits'])
+#    player_data = json_normalize(player_data['people'])
+#        
+#    player_data = player_data[PLAYER_DATA_WANTED]
+#    
+#    # Filter out the stats that we do not want
+#    try:
+#        if len(player_stats.columns) > 0:
+#            if (player_data['primaryPosition.code'][0] == 'G'):
+#                player_stats = player_stats[GOALIE_STATS_WANTED].copy()
+#                
+#                # Merge the player data and statistic DataFrames
+#                result = player_data.merge(player_stats, left_index=True, right_index=True)
+#    
+#                # Rename the column names to match the database
+#                result.columns = GOALIE_STATS_RENAMED
+#                
+#                return result
+#                
+#            else:
+#                player_stats = player_stats[PLAYER_STATS_WANTED].copy()
+#                
+#        else:
+#            player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
+#
+#    except KeyError as e:
+#        player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
+#        print(e)    
+#    
+#    # Merge the player data and statistic DataFrames
+#    result = player_data.merge(player_stats, left_index=True, right_index=True)
+#    
+#    # Rename the column names to match the database
+#    result.columns = PLAYER_STATS_RENAMED
+#    
+#    # Testing ------------------------------------------
+##    result.to_csv('test_player_stats.csv')
+##    player_data.to_csv('test_player_data.csv')
+#    # --------------------------------------------------
+#    
+#    return result
+
+# Parses the player data from the NHL API and filters out unwanted data and only leaves
+# the desired data as described in PLAYER_DATA_WANTED
+def parse_player_data(player_data):
+    result = json_normalize(player_data['people'])
     
-    # Get normalize the json data into pandas DataFrames
-    player_stats = json_normalize(player_stats['stats'][0]['splits'])
-    player_data = json_normalize(player_data['people'])
-        
-    player_data = player_data[PLAYER_DATA_WANTED]
-    
-    # Filter out the stats that we do not want
     try:
-        if len(player_stats.columns) > 0:
-            if (player_data['primaryPosition.code'][0] == 'G'):
-                player_stats = player_stats[GOALIE_STATS_WANTED].copy()
-                
-                # Merge the player data and statistic DataFrames
-                result = player_data.merge(player_stats, left_index=True, right_index=True)
-    
-                # Rename the column names to match the database
-                result.columns = GOALIE_STATS_RENAMED
-
-                isGoalie = True
-                
-                return result, isGoalie
-                
-            else:
-                player_stats = player_stats[PLAYER_STATS_WANTED].copy()
-                
-        else:
-            player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
-
+        result = result[PLAYER_DATA_WANTED]
+        result.columns = PLAYER_DATA_RENAMED
+        
     except KeyError as e:
-        player_stats = pd.DataFrame(columns=PLAYER_STATS_WANTED)
-        print(e)    
+        print(e)
+        return None
     
-    # Merge the player data and statistic DataFrames
-    result = player_data.merge(player_stats, left_index=True, right_index=True)
-    
-    # Rename the column names to match the database
-    result.columns = PLAYER_STATS_RENAMED
-    
-    # Testing ------------------------------------------
-#    result.to_csv('test_player_stats.csv')
-#    player_data.to_csv('test_player_data.csv')
-    # --------------------------------------------------
-    
-    return result, isGoalie
+    return result
 
+# Parses the player data from the NHL API and filters out unwanted data and only leaves
+# the desired data as described in STAT_LEADER_WANTED
 def parse_stat_leaders(data):
     try:
         result = json_normalize(data['data'])
@@ -205,6 +228,21 @@ def parse_stat_leaders(data):
     
     return result
 
+# Parses the player data from the NHL API and filters out unwanted data and only leaves
+# the desired data as described in GOALIE_LEADER_WANTED
+def parse_goalie_leader_stats(goalie_data):
+    try:
+        result = json_normalize(goalie_data['data'])
+        
+        result = result[GOALIE_LEADER_WANTED].copy()        
+        result.columns = GOALIE_LEADER_RENAMED
+        
+    except KeyError as e:
+        print(e)
+        return None
+    return result
+
+#
 def parse_player_career_stats(player_stats):
     career_stats = pd.DataFrame()
     for stats in player_stats['stats'][0]['splits']:

@@ -167,7 +167,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         player_model = QtSql.QSqlQueryModel()
         player_model.setQuery("""
                               SELECT Full_Name, Team_Abrv, Position, Games_Played,
-                              Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG, SHP, 
+                              Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG, SHP,
                               GWG, S, Shot_Percent, FO_Percent FROM players
                               ORDER BY Points DESC
                               """)
@@ -220,7 +220,8 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         id = id[0]
                 
         player_career_data = api.get_player_career_stats(str(id))
-        dialog = Player_Window(id, player_career_data, False)
+        player_data = api.get_player_data(str(id))
+        dialog = Player_Window(id, player_data, player_career_data, False)
         self.dialogs.append(dialog)
         dialog.show()
         self.conn.close()

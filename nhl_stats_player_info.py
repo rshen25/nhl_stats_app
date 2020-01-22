@@ -3,10 +3,11 @@ from custom_table import CustomTable
 from DataFrameModel import DataFrameModel
 
 class Player_Window(QtWidgets.QMainWindow):        
-    def __init__(self, player_id, player_career_data, isGoalie):
+    def __init__(self, player_id, player_data, player_career_data, isGoalie):
         super(Player_Window, self).__init__()
         self.player_id = player_id
         self.isGoalie = isGoalie
+        self.player_data = player_data
         self.player_career_data = player_career_data
         self.setupUi()
         
@@ -153,35 +154,25 @@ class Player_Window(QtWidgets.QMainWindow):
     
     # Populates and displays the player information such as name, age, team, etc.
     def display_player_info(self):
-        query = QtSql.QSqlQuery()
-        if self.isGoalie:
-            query.exec_("""SELECT Full_Name, Team_Name, Age, Height, Weight, Country, 
-                        Number, Catches, Position FROM goalies WHERE Player_ID = {}
-                        """.format(self.player_id))
         
-        else:
-            query.exec_("""SELECT Full_Name, Team_Name, Age, Height, Weight, Country, 
-                        Number, Shoots, Position FROM players WHERE Player_ID = {}
-                        """.format(self.player_id))
-        query.first()
         # Set label names
-        self.label_player_name.setText(str(query.value(0)))
+        self.label_player_name.setText(self.player_data.loc[0, 'Full_Name'])
         self.label_player_name.setScaledContents(True)
-        self.label_player_team.setText(str(query.value(1)))
+        self.label_player_team.setText(str(self.player_data.loc[0, 'Team_Name']))
         self.label_player_team.setScaledContents(True)        
-        self.label_player_age.setText("Age: " + str(query.value(2)))
+        self.label_player_age.setText("Age: " + str(self.player_data.loc[0, 'Age']))
         self.label_player_age.setScaledContents(True)
-        self.label_player_height.setText("Height: " + str(query.value(3)))
+        self.label_player_height.setText("Height: " + str(self.player_data.loc[0, 'Height']))
         self.label_player_height.setScaledContents(True)
-        self.label_player_weight.setText("Weight: " + str(query.value(4)))
+        self.label_player_weight.setText("Weight: " + str(self.player_data.loc[0, 'Weight']))
         self.label_player_weight.setScaledContents(True)
-        self.label_player_birthplace.setText("Country: " + str(query.value(5)))
+        self.label_player_birthplace.setText("Country: " + str(self.player_data.loc[0, 'Country']))
         self.label_player_birthplace.setScaledContents(True)
-        self.label_player_number.setText("Number: " + str(query.value(6)))
+        self.label_player_number.setText("Number: " + str(self.player_data.loc[0, 'Number']))
         self.label_player_number.setScaledContents(True)
-        self.label_player_shoots.setText("Handed: " + str(query.value(7)))
+        self.label_player_shoots.setText("Handed: " + str(self.player_data.loc[0, 'Shoots']))
         self.label_player_shoots.setScaledContents(True)
-        self.label_player_position.setText("Position: " + str(query.value(8)))
+        self.label_player_position.setText("Position: " + str(self.player_data.loc[0, 'Position']))
         self.label_player_position.setScaledContents(True)
             
     # Close event to close the database connection when window is closed

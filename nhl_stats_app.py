@@ -35,6 +35,7 @@ def init():
     create_teams_dict()
     
 #    get_stat_leaders()
+#    get_goalie_leaders()
 #    get_player_stats()
 
 # Saves all player ids for every team
@@ -70,79 +71,58 @@ def get_team_stats():
     
 # Takes in a list of player ids and requests their stats from the NHL API and 
 # returns their player statistics for the current season in a pandas DataFrame
-def get_player_stats():
-    conn = db.create_connection('nhl_stats.db')
-    goalies = pd.DataFrame()
-    players = pd.DataFrame()
-    # Iterate through all player ids
-    try:
-#        player_ids = pd.read_csv("resources/player_ids/players.csv")
-#        print(player_ids)
-#        players, goalies = api.get_all_player_season_stats(player_ids, '20192020')
-        
-        with open("resources/player_ids/players.csv".format(id), 'r', encoding='utf-8-sig') as player_ids_file:
-            reader = csv.DictReader(player_ids_file, delimiter=',')
-            for player_id in reader:
-            # Request player stat from NHL API
-                result, isGoalie = api.get_player_stats(player_id['playerIDs'], '20192020')
-                
-                # Insert data into players database table
-                if (isGoalie):
-                    goalies = pd.concat([result, goalies], ignore_index=True)
-                else:
-                    players = pd.concat([result, players], ignore_index=True)
-            
-            goalies.to_sql('tmp_goalies', con=conn, if_exists='append', index=False)
-            players.to_sql('tmp_players', con=conn, if_exists='append', index=False)
-        
-        goalies.to_sql('goalies', con=conn, if_exists='replace', index=False)
-        players.to_sql('players', con=conn, if_exists='replace', index=False)
-        
-#        goalies.to_sql('tmp_goalies', con=conn, if_exists='append', index=False)
-#        players.to_sql('tmp_players', con=conn, if_exists='append', index=False)
-                
-    except IOError as e:
-        # Get all player ids from teams
-        player_ids = get_and_save_player_ids()
-        
-        # Use player ids to get player stats
-        for player_id in player_ids.itertuples():
-            # Request player stat from NHL API
-            result, isGoalie = api.get_player_stats(player_id[0], '20192020')
-            
-            # Insert data into players database table
-            if (isGoalie):
-                goalies = pd.concat([result, goalies], ignore_index=True)
-            else:
-                players = pd.concat([result, players], ignore_index=True)
-        
-        goalies.to_sql('goalies', con=conn, if_exists='replace', index=False)
-        players.to_sql('players', con=conn, if_exists='replace', index=False)
-        
-        print(e)
-        
-        
-#    c = conn.cursor()
-        
-#    c.execute("SELECT * FROM tmp_goalies")
-#    rows = c.fetchall()
-#    for row in rows:
-#        conn.execute("""
-#                     REPLACE INTO goalies({})
-#                     VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?)
-#                     """.format(','.join(GOALIE_STATS_RENAMED)),
-#                     row)
+#def get_player_stats():
+#    conn = db.create_connection('nhl_stats.db')
+#    goalies = pd.DataFrame()
+#    players = pd.DataFrame()
+#    # Iterate through all player ids
+#    try:
+##        player_ids = pd.read_csv("resources/player_ids/players.csv")
+##        print(player_ids)
+##        players, goalies = api.get_all_player_season_stats(player_ids, '20192020')
 #        
-#    c.execute("SELECT * FROM tmp_players")
-#    rows = c.fetchall()
-#    for row in rows:
-#        conn.execute("""
-#                     REPLACE INTO players({})
-#                     VALUES (?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?)
-#                     """.format(','.join(PLAYER_STATS_RENAMED)),
-#                     row)
-    conn.close()
+#        with open("resources/player_ids/players.csv".format(id), 'r', encoding='utf-8-sig') as player_ids_file:
+#            reader = csv.DictReader(player_ids_file, delimiter=',')
+#            for player_id in reader:
+#            # Request player stat from NHL API
+#                result, isGoalie = api.get_player_stats(player_id['playerIDs'], '20192020')
+#                
+#                # Insert data into players database table
+#                if (isGoalie):
+#                    goalies = pd.concat([result, goalies], ignore_index=True)
+#                else:
+#                    players = pd.concat([result, players], ignore_index=True)
+#            
+#            goalies.to_sql('tmp_goalies', con=conn, if_exists='append', index=False)
+#            players.to_sql('tmp_players', con=conn, if_exists='append', index=False)
+#        
+#        goalies.to_sql('goalies', con=conn, if_exists='replace', index=False)
+#        players.to_sql('players', con=conn, if_exists='replace', index=False)
+#                
+#    except IOError as e:
+#        # Get all player ids from teams
+#        player_ids = get_and_save_player_ids()
+#        
+#        # Use player ids to get player stats
+#        for player_id in player_ids.itertuples():
+#            # Request player stat from NHL API
+#            result, isGoalie = api.get_player_stats(player_id[0], '20192020')
+#            
+#            # Insert data into players database table
+#            if (isGoalie):
+#                goalies = pd.concat([result, goalies], ignore_index=True)
+#            else:
+#                players = pd.concat([result, players], ignore_index=True)
+#        
+#        goalies.to_sql('goalies', con=conn, if_exists='replace', index=False)
+#        players.to_sql('players', con=conn, if_exists='replace', index=False)
+#        
+#        print(e)
+#        
+#    conn.close()
 
+# Gets the stats of all NHL skaters as shown in the NHL stat leader page, filters out unwanted stats,
+# and inserts it into the database.
 def get_stat_leaders():
     conn = db.create_connection('nhl_stats.db')
     
@@ -150,13 +130,19 @@ def get_stat_leaders():
     for i in range(9):
         result = api.get_stat_leaders('20192020', i)
         stat_leaders = pd.concat([stat_leaders, result], ignore_index=True)
-    
-    print(stat_leaders)
-
     stat_leaders.to_sql('players', con=conn, if_exists='replace', index=False)
-    
     conn.close()
-    return None
+
+# Gets the stats of all NHL goalies as shown in the NHL stat leader page, filters out unwanted stats,
+# and inserts it into the database.
+def get_goalie_leaders():
+    conn = db.create_connection('nhl_stats.db')
+    goalie_leaders = pd.DataFrame()
+    result = api.get_goalie_stats('20192020')
+    goalie_leaders = pd.concat([goalie_leaders, result], ignore_index=True)
+    print(goalie_leaders)
+    goalie_leaders.to_sql('goalies', con=conn, if_exists='replace', index=False)
+    conn.close()    
 
 def create_teams_dict():
     conn = db.create_connection('nhl_stats.db')
