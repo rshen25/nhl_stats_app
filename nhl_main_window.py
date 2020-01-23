@@ -93,7 +93,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         
         self.set_standings_table(self.table_west_standings, self.table_east_standings)
                 
-        self.set_player_stats_table(self.table_player_stats)
+        self.set_player_stats_table()
         self.set_goalie_stats_table(self.table_goalie_stats)
                 
         self.create_current_games_buttons(self.gamesLayout)              
@@ -127,9 +127,6 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         if not db.open():
             QtWidgets.QMessageBox.critical(None, "Cannot open database",
                              "Unable to establish a database connection.\n"
-                             "This example needs SQLite support. Please read "
-                             "the Qt SQL driver documentation for information how "
-                             "to build it.\n\n"
                              "Click Cancel to exit.", QtWidgets.QMessageBox.Cancel)
             return False
         
@@ -162,7 +159,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         
 
     # Sets the database to the player stats table to enable queries to db
-    def set_player_stats_table(self, table_player_stats):
+    def set_player_stats_table(self):
         # Set the western conference standings table
         player_model = QtSql.QSqlQueryModel()
         player_model.setQuery("""
@@ -171,18 +168,24 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
                               GWG, S, Shot_Percent, FO_Percent FROM players
                               ORDER BY Points DESC
                               """)
+#        
+#        player_model = QtSql.QSqlTableModel()
+#        player_model.setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
+#        player_model.select()
+#        player_model.setTable("players")
         
-        table_player_stats.setModel(player_model)
+        self.table_player_stats.setModel(player_model)
+        
+        
             
     # Set the goalie stats table with the database
     def set_goalie_stats_table(self, table_goalie_stats):
         # Set the eastern conference standings table
         goalie_model = QtSql.QSqlQueryModel()
         goalie_model.setQuery("""
-                              SELECT Full_Name, Team_Name, Age, Height, Weight, Country,
-                              Number, Position, Games_Played, Games_Started, Wins, Losses,
-                              OT, Shutouts, Saves, Save_Percentage, GAA, GA, SA FROM goalies
-                              ORDER BY Wins DESC
+                              SELECT Full_Name, Team_Abrv, Catches, GP, GS, W, L, OTL, SO, SA, Sv,
+                              GA, SvPct, GAA, TOI, G, A, P, PIM FROM goalies
+                              ORDER BY W DESC
                               """)
         table_goalie_stats.setModel(goalie_model)
             
@@ -238,14 +241,15 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         c = self.conn.cursor()
         
         c.execute(""" SELECT Player_ID FROM goalies
-                  WHERE Full_Name = (?) AND Team_Name = (?)
+                  WHERE Full_Name = (?) AND Team_Abrv = (?)
                   """, (goalie_name, team))
         id = c.fetchone()
         id = id[0]
         print(id)
                 
         goalie_career_data = api.get_goalie_career_stats(str(id))
-        dialog = Player_Window(id, goalie_career_data, True)
+        player_data = api.get_player_data(str(id))
+        dialog = Player_Window(id, player_data, goalie_career_data, True)
         self.dialogs.append(dialog)
         dialog.show()
         self.conn.close()

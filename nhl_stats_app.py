@@ -140,7 +140,7 @@ def get_goalie_leaders():
     goalie_leaders = pd.DataFrame()
     result = api.get_goalie_stats('20192020')
     goalie_leaders = pd.concat([goalie_leaders, result], ignore_index=True)
-    print(goalie_leaders)
+
     goalie_leaders.to_sql('goalies', con=conn, if_exists='replace', index=False)
     conn.close()    
 
