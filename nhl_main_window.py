@@ -20,78 +20,147 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.resize(1198, 968)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        self.label_standings = QtWidgets.QLabel(self.centralwidget)
-        self.label_standings.setGeometry(QtCore.QRect(10, 580, 47, 13))
-        self.label_standings.setObjectName("label_standings")
-        self.label_west_conference = QtWidgets.QLabel(self.centralwidget)
-        self.label_west_conference.setGeometry(QtCore.QRect(20, 590, 121, 16))
-        self.label_west_conference.setObjectName("label_west_conference")
-        self.label_east_conference = QtWidgets.QLabel(self.centralwidget)
-        self.label_east_conference.setGeometry(QtCore.QRect(610, 590, 121, 16))
-        self.label_east_conference.setObjectName("label_east_conference")
+                
+        # Player stats
         self.label_player_stats = QtWidgets.QLabel(self.centralwidget)
-        self.label_player_stats.setGeometry(QtCore.QRect(10, 90, 81, 16))
+        self.label_player_stats.setGeometry(QtCore.QRect(10, 70, 81, 16))
         self.label_player_stats.setObjectName("label_player_stats")
-        self.label_games = QtWidgets.QLabel(self.centralwidget)
-        self.label_games.setGeometry(QtCore.QRect(560, 0, 47, 13))
-        self.label_games.setObjectName("label_games")
-        self.label_goalie_stats = QtWidgets.QLabel(self.centralwidget)
-        self.label_goalie_stats.setGeometry(QtCore.QRect(20, 340, 81, 16))
-        self.label_goalie_stats.setObjectName("label_goalie_stats")
+                        
         self.btn_update_player_stats = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_player_stats.setGeometry(QtCore.QRect(70, 90, 75, 23))
+        self.btn_update_player_stats.setGeometry(QtCore.QRect(890, 290, 75, 23))
         self.btn_update_player_stats.setObjectName("btn_update_player_stats")
-        self.btn_update_goalie_stats = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_goalie_stats.setGeometry(QtCore.QRect(90, 340, 75, 23))
-        self.btn_update_goalie_stats.setObjectName("btn_update_goalie_stats")
-        self.btn_update_standings = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_standings.setGeometry(QtCore.QRect(130, 580, 75, 23))
-        self.btn_update_standings.setObjectName("btn_update_standings")
-        self.btn_player_details = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_player_details.setGeometry(QtCore.QRect(1110, 330, 75, 23))
-        self.btn_player_details.setObjectName("pushButton_4")
-        
-        self.btn_goalie_details = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_goalie_details.setGeometry(QtCore.QRect(1030, 330, 75, 23))
-        self.btn_goalie_details.setObjectName("pushButton_5")
-        
-        self.table_west_standings = CustomTable(self.centralwidget)
-        self.table_west_standings.setGeometry(QtCore.QRect(10, 610, 581, 311))
-        self.table_west_standings.setObjectName("table_west_standings")
         
         self.table_player_stats = CustomTable(self.centralwidget)
-        self.table_player_stats.setGeometry(QtCore.QRect(10, 110, 1181, 221))
+        self.table_player_stats.setGeometry(QtCore.QRect(10, 90, 871, 221))
         self.table_player_stats.setObjectName("table_player_stats")
+                
+        self.btn_more_player_info = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_more_player_info.setGeometry(QtCore.QRect(890, 260, 75, 23))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_more_player_info.sizePolicy().hasHeightForWidth())
+        self.btn_more_player_info.setSizePolicy(sizePolicy)
+        self.btn_more_player_info.setObjectName("btn_more_player_info")
+                
+        self.line_edit_player_search = QtWidgets.QLineEdit(self.centralwidget)
+        self.line_edit_player_search.setGeometry(QtCore.QRect(890, 90, 191, 31))
+        self.line_edit_player_search.setObjectName("line_edit_player_search")
+        
+        self.btn_player_search = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_player_search.setGeometry(QtCore.QRect(1090, 90, 81, 31))
+        self.btn_player_search.setObjectName("btn_player_search")
+        
+        self.table_player_search_result = QtWidgets.QTableView(self.centralwidget)
+        self.table_player_search_result.setGeometry(QtCore.QRect(890, 130, 291, 121))
+        self.table_player_search_result.setObjectName("table_player_search_result")
+        
+        # Goalie stats
+        self.label_goalie_stats = QtWidgets.QLabel(self.centralwidget)
+        self.label_goalie_stats.setGeometry(QtCore.QRect(20, 320, 81, 16))
+        self.label_goalie_stats.setObjectName("label_goalie_stats")
         
         self.table_goalie_stats = CustomTable(self.centralwidget)
-        self.table_goalie_stats.setGeometry(QtCore.QRect(10, 360, 1181, 221))
+        self.table_goalie_stats.setGeometry(QtCore.QRect(10, 340, 871, 221))
         self.table_goalie_stats.setObjectName("table_goalie_stats")
         
-        self.table_east_standings = CustomTable(self.centralwidget)
-        self.table_east_standings.setGeometry(QtCore.QRect(610, 610, 581, 311))
-        self.table_east_standings.setObjectName("table_east_standings")
+        self.btn_update_goalie_stats = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_update_goalie_stats.setGeometry(QtCore.QRect(890, 540, 75, 23))
+        self.btn_update_goalie_stats.setObjectName("btn_update_goalie_stats")
         
+        self.btn_update_standings = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_update_standings.setGeometry(QtCore.QRect(1030, 310, 75, 23))
+        self.btn_update_standings.setObjectName("btn_update_standings")
+                
+        self.btn_more_goalie_info = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_more_goalie_info.setGeometry(QtCore.QRect(890, 510, 75, 23))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btn_more_goalie_info.sizePolicy().hasHeightForWidth())
+        self.btn_more_goalie_info.setSizePolicy(sizePolicy)
+        self.btn_more_goalie_info.setObjectName("btn_more_goalie_info")
+        
+        self.line_edit_goalie_search = QtWidgets.QLineEdit(self.centralwidget)
+        self.line_edit_goalie_search.setGeometry(QtCore.QRect(890, 340, 191, 31))
+        self.line_edit_goalie_search.setObjectName("line_edit_goalie_search")
+        
+        self.btn_goalie_search = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_goalie_search.setGeometry(QtCore.QRect(1090, 340, 81, 31))
+        self.btn_goalie_search.setObjectName("btn_goalie_search")
+        
+        self.table_goalie_search_result = QtWidgets.QTableView(self.centralwidget)
+        self.table_goalie_search_result.setGeometry(QtCore.QRect(890, 380, 291, 121))
+        self.table_goalie_search_result.setObjectName("table_goalie_search_result")
+        
+        # Standings        
+        self.table_pacific_division = CustomTable(self.centralwidget)
+        self.table_pacific_division.setGeometry(QtCore.QRect(10, 600, 581, 151))
+        self.table_pacific_division.setObjectName("table_pacific_division")
+                
+        self.table_metro_division = CustomTable(self.centralwidget)
+        self.table_metro_division.setGeometry(QtCore.QRect(610, 600, 581, 151))
+        self.table_metro_division.setObjectName("table_metro_division")
+        
+        self.label_standings = QtWidgets.QLabel(self.centralwidget)
+        self.label_standings.setGeometry(QtCore.QRect(10, 570, 47, 13))
+        self.label_standings.setObjectName("label_standings")
+        
+        self.label_pacific_division = QtWidgets.QLabel(self.centralwidget)
+        self.label_pacific_division.setGeometry(QtCore.QRect(10, 580, 121, 16))
+        self.label_pacific_division.setObjectName("label_pacific_division")
+        
+        self.label_metro_division = QtWidgets.QLabel(self.centralwidget)
+        self.label_metro_division.setGeometry(QtCore.QRect(610, 580, 121, 16))
+        self.label_metro_division.setObjectName("label_metro_division")
+        
+        self.table_central_division = CustomTable(self.centralwidget)
+        self.table_central_division.setGeometry(QtCore.QRect(10, 770, 581, 151))
+        self.table_central_division.setObjectName("table_central_division")
+        
+        self.table_atlantic_division = CustomTable(self.centralwidget)
+        self.table_atlantic_division.setGeometry(QtCore.QRect(610, 770, 581, 151))
+        self.table_atlantic_division.setObjectName("table_atlantic_division")
+        
+        self.label_atlantic_division = QtWidgets.QLabel(self.centralwidget)
+        self.label_atlantic_division.setGeometry(QtCore.QRect(610, 750, 121, 16))
+        self.label_atlantic_division.setObjectName("label_atlantic_division")
+
+        self.label_central_division = QtWidgets.QLabel(self.centralwidget)
+        self.label_central_division.setGeometry(QtCore.QRect(10, 750, 121, 16))
+        self.label_central_division.setObjectName("label_central_division")
+        
+        # Games for the day
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1181, 80))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1181, 51))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.gamesLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.gamesLayout.setContentsMargins(0, 0, 0, 0)
         self.gamesLayout.setObjectName("gamesLayout")
+                        
+        # Menu bar
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1198, 21))
         self.menubar.setObjectName("menubar")
         self.setMenuBar(self.menubar)
+        self.menuFile = QtWidgets.QMenu(self.menubar)
+        self.menuFile.setObjectName("menuFile")
+        self.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
+        self.actionExit = QtWidgets.QAction(self)
+        self.actionExit.setObjectName("actionExit")
+        self.menuFile.addAction(self.actionExit)
+        self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
         
         self.db = self.create_connection()
         
-        self.set_standings_table(self.table_west_standings, self.table_east_standings)
+        self.set_standings_table()
                 
         self.set_player_stats_table()
         self.set_goalie_stats_table(self.table_goalie_stats)
@@ -99,8 +168,8 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.create_current_games_buttons(self.gamesLayout)              
         
         # Set up the more player details button
-        self.btn_player_details.clicked.connect(self.open_player_info)
-        self.btn_goalie_details.clicked.connect(self.open_goalie_info)
+        self.btn_more_player_info.clicked.connect(self.open_player_info)
+        self.btn_more_goalie_info.clicked.connect(self.open_goalie_info)
         
         self.db.close()
         self.conn.close()
@@ -108,17 +177,33 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+#        self.label_standings.setText(_translate("MainWindow", "Standings"))
+#        self.label_west_conference.setText(_translate("MainWindow", "Western Conference"))
+#        self.label_east_conference.setText(_translate("MainWindow", "Eastern Conference"))
+#        self.label_player_stats.setText(_translate("MainWindow", "Player Stats"))
+#        self.label_games.setText(_translate("MainWindow", "Games"))
+#        self.label_goalie_stats.setText(_translate("MainWindow", "Goalies Stats"))
+#        self.btn_update_player_stats.setText(_translate("MainWindow", "Update"))
+#        self.btn_update_goalie_stats.setText(_translate("MainWindow", "Update"))
+#        self.btn_update_standings.setText(_translate("MainWindow", "Update"))
+#        self.btn_player_details.setText(_translate("MainWindow", "More Player Details"))
+#        self.btn_goalie_details.setText(_translate("MainWindow", "More Goalie Details"))
         self.label_standings.setText(_translate("MainWindow", "Standings"))
-        self.label_west_conference.setText(_translate("MainWindow", "Western Conference"))
-        self.label_east_conference.setText(_translate("MainWindow", "Eastern Conference"))
+        self.label_pacific_division.setText(_translate("MainWindow", "Pacific Division"))
+        self.label_metro_division.setText(_translate("MainWindow", "Metropolitan Division"))
         self.label_player_stats.setText(_translate("MainWindow", "Player Stats"))
-        self.label_games.setText(_translate("MainWindow", "Games"))
         self.label_goalie_stats.setText(_translate("MainWindow", "Goalies Stats"))
         self.btn_update_player_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_goalie_stats.setText(_translate("MainWindow", "Update"))
         self.btn_update_standings.setText(_translate("MainWindow", "Update"))
-        self.btn_player_details.setText(_translate("MainWindow", "More Player Details"))
-        self.btn_goalie_details.setText(_translate("MainWindow", "More Goalie Details"))
+        self.btn_more_player_info.setText(_translate("MainWindow", "More Player Details"))
+        self.btn_more_goalie_info.setText(_translate("MainWindow", "More Goalie Details"))
+        self.btn_goalie_search.setText(_translate("MainWindow", "Search"))
+        self.btn_player_search.setText(_translate("MainWindow", "Search"))
+        self.label_atlantic_division.setText(_translate("MainWindow", "Atlantic Division"))
+        self.label_central_division.setText(_translate("MainWindow", "Central Division"))
+        self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.actionExit.setText(_translate("MainWindow", "Exit"))
     
     # Creates a connection to the nhl stats database
     def create_connection(self):
@@ -133,29 +218,50 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         return db
 
     # Sets the database to the standings table
-    def set_standings_table(self, table_west_standings, table_east_standings):
+    def set_standings_table(self):
         # Set the western conference standings table
-        west_model = QtSql.QSqlQueryModel()
-        west_model.setQuery("""
+        pacific_model = QtSql.QSqlQueryModel()
+        pacific_model.setQuery("""
                             SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
                             GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
                             Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
-                            WHERE Conference = 'Western'
+                            WHERE Division = 'Pacific'
                             ORDER BY Points DESC
                             """)
         
-        table_west_standings.setModel(west_model)
+        self.table_pacific_division.setModel(pacific_model)
+        
+        central_model = QtSql.QSqlQueryModel()
+        central_model.setQuery("""
+                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+                            GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
+                            Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
+                            WHERE Division = 'Central'
+                            ORDER BY Points DESC
+                            """)
+        
+        self.table_central_division.setModel(central_model)
         
         # Set the eastern conference standings table
-        east_model = QtSql.QSqlQueryModel()
-        east_model.setQuery("""
+        metro_model = QtSql.QSqlQueryModel()
+        metro_model.setQuery("""
                             SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
                             GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
                             Goals_Scored, Goals_Against, Goal_Diff, Streak 
-                            FROM teams WHERE Conference = 'Eastern'
+                            FROM teams WHERE Division = 'Metropolitan'
                             ORDER BY Points DESC
                             """)
-        table_east_standings.setModel(east_model)
+        self.table_metro_division.setModel(metro_model)
+        
+        atlantic_model = QtSql.QSqlQueryModel()
+        atlantic_model.setQuery("""
+                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+                            GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
+                            Goals_Scored, Goals_Against, Goal_Diff, Streak 
+                            FROM teams WHERE Division = 'Atlantic'
+                            ORDER BY Points DESC
+                            """)
+        self.table_atlantic_division.setModel(atlantic_model)
         
 
     # Sets the database to the player stats table to enable queries to db
@@ -168,12 +274,10 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
                               GWG, S, Shot_Percent, FO_Percent FROM players
                               ORDER BY Points DESC
                               """)
-#        
-#        player_model = QtSql.QSqlTableModel()
-#        player_model.setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
-#        player_model.select()
-#        player_model.setTable("players")
         
+        while(player_model.canFetchMore()):
+            player_model.fetchMore()
+            
         self.table_player_stats.setModel(player_model)
         
         
