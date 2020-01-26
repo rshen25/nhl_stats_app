@@ -43,6 +43,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_more_player_info.setSizePolicy(sizePolicy)
         self.btn_more_player_info.setObjectName("btn_more_player_info")
                 
+        # Player Search
         self.line_edit_player_search = QtWidgets.QLineEdit(self.centralwidget)
         self.line_edit_player_search.setGeometry(QtCore.QRect(890, 90, 191, 31))
         self.line_edit_player_search.setObjectName("line_edit_player_search")
@@ -51,7 +52,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_player_search.setGeometry(QtCore.QRect(1090, 90, 81, 31))
         self.btn_player_search.setObjectName("btn_player_search")
         
-        self.table_player_search_result = QtWidgets.QTableView(self.centralwidget)
+        self.table_player_search_result = CustomTable(self.centralwidget)
         self.table_player_search_result.setGeometry(QtCore.QRect(890, 130, 291, 121))
         self.table_player_search_result.setObjectName("table_player_search_result")
         
@@ -69,7 +70,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_update_goalie_stats.setObjectName("btn_update_goalie_stats")
         
         self.btn_update_standings = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_standings.setGeometry(QtCore.QRect(1030, 310, 75, 23))
+        self.btn_update_standings.setGeometry(QtCore.QRect(90, 570, 75, 23))
         self.btn_update_standings.setObjectName("btn_update_standings")
                 
         self.btn_more_goalie_info = QtWidgets.QPushButton(self.centralwidget)
@@ -81,6 +82,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_more_goalie_info.setSizePolicy(sizePolicy)
         self.btn_more_goalie_info.setObjectName("btn_more_goalie_info")
         
+        # Goalie Search
         self.line_edit_goalie_search = QtWidgets.QLineEdit(self.centralwidget)
         self.line_edit_goalie_search.setGeometry(QtCore.QRect(890, 340, 191, 31))
         self.line_edit_goalie_search.setObjectName("line_edit_goalie_search")
@@ -89,7 +91,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_goalie_search.setGeometry(QtCore.QRect(1090, 340, 81, 31))
         self.btn_goalie_search.setObjectName("btn_goalie_search")
         
-        self.table_goalie_search_result = QtWidgets.QTableView(self.centralwidget)
+        self.table_goalie_search_result = CustomTable(self.centralwidget)
         self.table_goalie_search_result.setGeometry(QtCore.QRect(890, 380, 291, 121))
         self.table_goalie_search_result.setObjectName("table_goalie_search_result")
         
@@ -161,33 +163,25 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.db = self.create_connection()
         
         self.set_standings_table()
-                
         self.set_player_stats_table()
         self.set_goalie_stats_table(self.table_goalie_stats)
-                
+               
         self.create_current_games_buttons(self.gamesLayout)              
         
         # Set up the more player details button
         self.btn_more_player_info.clicked.connect(self.open_player_info)
         self.btn_more_goalie_info.clicked.connect(self.open_goalie_info)
         
+        # Set up goalie and player search buttons
+        self.btn_goalie_search.clicked.connect(self.open_searched_goalie_info)
+        self.btn_player_search.clicked.connect(self.open_searched_player_info)
+                
         self.db.close()
         self.conn.close()
-
+        
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-#        self.label_standings.setText(_translate("MainWindow", "Standings"))
-#        self.label_west_conference.setText(_translate("MainWindow", "Western Conference"))
-#        self.label_east_conference.setText(_translate("MainWindow", "Eastern Conference"))
-#        self.label_player_stats.setText(_translate("MainWindow", "Player Stats"))
-#        self.label_games.setText(_translate("MainWindow", "Games"))
-#        self.label_goalie_stats.setText(_translate("MainWindow", "Goalies Stats"))
-#        self.btn_update_player_stats.setText(_translate("MainWindow", "Update"))
-#        self.btn_update_goalie_stats.setText(_translate("MainWindow", "Update"))
-#        self.btn_update_standings.setText(_translate("MainWindow", "Update"))
-#        self.btn_player_details.setText(_translate("MainWindow", "More Player Details"))
-#        self.btn_goalie_details.setText(_translate("MainWindow", "More Goalie Details"))
         self.label_standings.setText(_translate("MainWindow", "Standings"))
         self.label_pacific_division.setText(_translate("MainWindow", "Pacific Division"))
         self.label_metro_division.setText(_translate("MainWindow", "Metropolitan Division"))
@@ -262,7 +256,6 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
                             ORDER BY Points DESC
                             """)
         self.table_atlantic_division.setModel(atlantic_model)
-        
 
     # Sets the database to the player stats table to enable queries to db
     def set_player_stats_table(self):
@@ -280,8 +273,6 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
             
         self.table_player_stats.setModel(player_model)
         
-        
-            
     # Set the goalie stats table with the database
     def set_goalie_stats_table(self, table_goalie_stats):
         # Set the eastern conference standings table
@@ -299,9 +290,12 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
             # Iterate through each row
             for index, row in self.games.iterrows():
                 # Create a button, edit the text to be Away @ Home
-                self.button = QtWidgets.QPushButton("{} @ {}".format(self.teams[row['awayID']], self.teams[row['homeID']]))
-                self.button.clicked.connect(partial(self.open_boxscore, index))
-                layout.addWidget(self.button)
+                try:
+                    self.button = QtWidgets.QPushButton("{} @ {}".format(self.teams[row['awayID']], self.teams[row['homeID']]))
+                    self.button.clicked.connect(partial(self.open_boxscore, index))
+                    layout.addWidget(self.button)
+                except KeyError as e:
+                    print(e)
         except AttributeError as e:
             print(e)
             
@@ -326,9 +320,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         id = c.fetchone()
         id = id[0]
                 
-        player_career_data = api.get_player_career_stats(str(id))
-        player_data = api.get_player_data(str(id))
-        dialog = Player_Window(id, player_data, player_career_data, False)
+        dialog = Player_Window(id, False)
         self.dialogs.append(dialog)
         dialog.show()
         self.conn.close()
@@ -351,13 +343,51 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         id = id[0]
         print(id)
                 
-        goalie_career_data = api.get_goalie_career_stats(str(id))
-        player_data = api.get_player_data(str(id))
-        dialog = Player_Window(id, player_data, goalie_career_data, True)
+        dialog = Player_Window(id, True)
         self.dialogs.append(dialog)
         dialog.show()
         self.conn.close()
-    
+            
+    # Searches for players within the database based on user inputed name
+    def open_searched_player_info(self):
+        self.db = self.create_connection()
+        self.db.open()
+        # Get selection
+        name = self.line_edit_player_search.text()
+
+        query = QtSql.QSqlQuery(self.db)
+        query.prepare("SELECT Full_Name, Team_Abrv, Position, Games_Played, Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG, SHP, GWG, S, Shot_Percent, FO_Percent FROM players WHERE Full_Name LIKE (?)")
+        query.bindValue(0, "%{}%".format(name))
+        query.exec_()
+
+        search_model = QtSql.QSqlQueryModel()
+        search_model.setQuery(query)
+        
+        self.table_player_search_result.setModel(search_model)
+        self.table_player_search_result.show()
+        
+        self.db.close()
+
+        
+    # Searches for the goalies within the database based on user inputed name
+    def open_searched_goalie_info(self):
+        self.db = self.create_connection()
+        self.db.open()
+        # Get selection
+        name = self.line_edit_goalie_search.text()
+        
+        query = QtSql.QSqlQuery(self.db)
+        query.prepare("SELECT Full_Name, Team_Abrv, Catches, GP, GS, W, L, OTL, SO, SA, Sv, GA, SvPct, GAA, TOI, G, A, P, PIM FROM goalies WHERE Full_Name LIKE (?)")
+        query.bindValue(0, "%{}%".format(name))
+        query.exec_()
+        
+        search_model = QtSql.QSqlQueryModel()
+        search_model.setQuery(query)
+        
+        self.table_goalie_search_result.setModel(search_model)
+        self.table_goalie_search_result.show()        
+        self.db.close()
+
     # Gets the player name and the team name from the player stats table
     def get_selected_player(self):
         rows = self.table_player_stats.selectionModel().selectedRows()

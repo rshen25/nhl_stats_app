@@ -1,19 +1,21 @@
+import api
 from PyQt5 import QtCore, QtWidgets, QtSql
 from custom_table import CustomTable
 from DataFrameModel import DataFrameModel
 
 class Player_Window(QtWidgets.QMainWindow):        
-    def __init__(self, player_id, player_data, player_career_data, isGoalie):
+    def __init__(self, player_id, isGoalie):
         super(Player_Window, self).__init__()
         self.player_id = player_id
         self.isGoalie = isGoalie
-        self.player_data = player_data
-        self.player_career_data = player_career_data
+        self.player_data = api.get_player_data(player_id)
+        self.player_career_data = api.get_player_career_stats(player_id)
+        self.game_log = api.get_game_log(player_id, '20192020') #TODO: Move out hardcoded string
         self.setupUi()
         
     def setupUi(self):
         self.setObjectName("MainWindow")
-        MainWindow.resize(590, 607)
+        self.resize(590, 607)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
 #        self.table_season_stats = CustomTable(self.centralwidget)
@@ -28,10 +30,10 @@ class Player_Window(QtWidgets.QMainWindow):
         self.table_career_stats = CustomTable(self.centralwidget)
         self.table_career_stats.setGeometry(QtCore.QRect(10, 130, 571, 201))
         self.table_career_stats.setObjectName("table_career_stats")
-        self.model = DataFrameModel(self.player_career_data)
-        self.table_career_stats.setModel(self.model)
+        self.player_career_data_model = DataFrameModel(self.player_career_data)
+        self.table_career_stats.setModel(self.player_career_data_model)
         
-        
+        # Player information
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(410, 0, 160, 110))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
@@ -56,7 +58,6 @@ class Player_Window(QtWidgets.QMainWindow):
         self.label_player_birthplace.setObjectName("label_player_birthplace")
         self.verticalLayout.addWidget(self.label_player_birthplace)
         
-
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 0, 331, 111))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
@@ -77,33 +78,19 @@ class Player_Window(QtWidgets.QMainWindow):
         self.label_player_position.setObjectName("label_player_position")
         self.verticalLayout_2.addWidget(self.label_player_position)
 
-
-#        self.label_player_name = QtWidgets.QLabel(self.centralwidget)
-#        self.label_player_name.setGeometry(QtCore.QRect(20, 10, 111, 41))
-#        self.label_player_name.setObjectName("label_player_name")
-#        self.verticalLayout2.addWidget(self.label_player_name)
-#        self.label_player_team = QtWidgets.QLabel(self.centralwidget)
-#        self.label_player_team.setGeometry(QtCore.QRect(120, 70, 111, 31))
-#        self.label_player_team.setObjectName("label_player_team")
-#        self.verticalLayout2.addWidget(self.label_player_team)
-#        self.label_player_number = QtWidgets.QLabel(self.centralwidget)
-#        self.label_player_number.setGeometry(QtCore.QRect(120, 20, 81, 16))
-#        self.label_player_number.setObjectName("label_player_number")
-#        self.verticalLayout2.addWidget(self.label_player_number)
-#        self.label_player_position = QtWidgets.QLabel(self.centralwidget)
-#        self.label_player_position.setGeometry(QtCore.QRect(30, 80, 47, 13))
-#        self.label_player_position.setObjectName("label_player_position")
-#        self.verticalLayout2.addWidget(self.label_player_position)
-
+        # Game Log
         self.label_game_log = QtWidgets.QLabel(self.centralwidget)
         self.label_game_log.setGeometry(QtCore.QRect(10, 340, 51, 16))
         self.label_game_log.setObjectName("label_game_log")
         
-        self.table_game_log = QtWidgets.QTableView(self.centralwidget)
+        self.table_game_log = CustomTable(self.centralwidget)
         self.table_game_log.setGeometry(QtCore.QRect(10, 360, 571, 201))
         self.table_game_log.setObjectName("table_game_log")
+        self.game_log_model = DataFrameModel(self.game_log)
+        self.table_game_log.setModel(self.game_log_model)
+        
 
-
+        # Menu bar
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 988, 21))
@@ -199,7 +186,7 @@ class Player_Window(QtWidgets.QMainWindow):
         self.label_player_shoots.setScaledContents(True)
         self.label_player_position.setText("Position: " + str(self.player_data.loc[0, 'Position']))
         self.label_player_position.setScaledContents(True)
-            
+                    
     # Close event to close the database connection when window is closed
     def closeEvent(self, event):
         super(Player_Window, self).closeEvent(event)

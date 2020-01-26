@@ -56,6 +56,11 @@ GOALIE_LEADER_WANTED = ['playerId', 'goalieFullName', 'teamAbbrevs', 'shootsCatc
 GOALIE_LEADER_RENAMED = ['Player_ID', 'Full_Name', 'Team_Abrv', 'Catches', 'GP', 'GS', 'W', 'L', 'OTL', 'SO', 'SA', 'Sv',
                          'GA', 'SvPct', 'GAA', 'TOI', 'G', 'A', 'P', 'PIM']
 
+PLAYER_GAME_LOG_STATS = ['date', 'opponent.name', 'stat.goals', 'stat.assists', 'stat.points', 'stat.plusMinus', 'stat.shots', 'stat.timeOnIce', 
+                  'stat.pim', 'stat.hits', 'stat.powerPlayGoals', 'stat.powerPlayPoints', 'stat.shotPct', 'stat.shifts']
+
+PLAYER_GAME_LOG_RENAMED = ['Date', 'Opp', 'G', 'A', 'P', '+/-', 'Shots', 'TOI', 'PIM', 'Hits', 'PPG', 'PPP', 'ShotPct', 'Shifts']
+
 team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
              'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
              'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP_Percent', 'PK_Percent', 'Conference', 'Division']
@@ -294,6 +299,18 @@ def parse_games(games_data):
     games = json_normalize(games_data['dates'][0]['games'])
     result = games[['gamePk', 'teams.away.team.id', 'teams.home.team.id']].copy()
     result.columns = ['gameID', 'awayID', 'homeID']
+    
+    return result
+
+def parse_game_log(game_log):
+    result = pd.DataFrame()
+    
+    result = json_normalize(game_log['stats'][0]['splits'])
+    
+    result = result[PLAYER_GAME_LOG_STATS].copy()
+    result.columns = PLAYER_GAME_LOG_RENAMED
+    
+    result.to_csv('test_game_log.csv')
     
     return result
 

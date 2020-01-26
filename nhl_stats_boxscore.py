@@ -48,20 +48,6 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         self.verticalLayout.addLayout(self.layout_goals_display)
         self.scrollArea_goals.setWidget(self.scrollAreaWidgetContents_2)
         
-#        self.scrollArea_goals = QtWidgets.QScrollArea(self.centralwidget)
-#        self.scrollArea_goals.setGeometry(QtCore.QRect(670, 30, 201, 667))
-#        self.scrollArea_goals.setWidgetResizable(True)
-#        self.scrollArea_goals.setObjectName("scrollArea_goals")
-#        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-#        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 199, 665))
-#        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
-#        self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
-#        self.verticalLayout.setObjectName("verticalLayout")
-#        self.layout_goals_display = QtWidgets.QVBoxLayout()
-#        self.layout_goals_display.setObjectName("layout_goals_display")
-#        self.verticalLayout.addLayout(self.layout_goals_display)
-#        self.scrollArea_goals.setWidget(self.scrollAreaWidgetContents_2)        
-        
         # Home Score         
         self.horizontalLayoutWidget_4 = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(10, 0, 151, 61))

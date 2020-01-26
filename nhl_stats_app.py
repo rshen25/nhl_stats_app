@@ -34,6 +34,8 @@ def init():
     get_team_stats()
     create_teams_dict()
     
+#    api.get_game_log('8480012', '20192020')
+    
 #    get_stat_leaders()
 #    get_goalie_leaders()
 #    get_player_stats()

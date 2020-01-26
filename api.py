@@ -190,7 +190,14 @@ def get_goalie_stats(season):
     else:
         return None
 
-
+def get_game_log(player_id, season):
+    response = requests.get("{}/people/{}/stats?stats=gameLog&season={}".format(BASE, player_id, season))
+    if response.status_code == 200:
+        game_log = response.json()
+        result = parse.parse_game_log(game_log)
+        return result
+    else:
+        return None
 
 # Requests the NHL api to get the player stats in json form
 # input - a pandas dataframe of the player ids
