@@ -173,9 +173,13 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.btn_more_goalie_info.clicked.connect(self.open_goalie_info)
         
         # Set up goalie and player search buttons
-        self.btn_goalie_search.clicked.connect(self.open_searched_goalie_info)
-        self.btn_player_search.clicked.connect(self.open_searched_player_info)
+        self.btn_goalie_search.clicked.connect(self.search_goalie)
+        self.btn_player_search.clicked.connect(self.search_player)
                 
+        # Set up double clicking search tables
+        self.table_player_search_result.doubleClicked.connect(self.open_detailed_search_player)
+        self.table_goalie_search_result.doubleClicked.connect(self.open_detailed_search_goalie)
+    
         self.db.close()
         self.conn.close()
         
@@ -349,14 +353,14 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.conn.close()
             
     # Searches for players within the database based on user inputed name
-    def open_searched_player_info(self):
+    def search_player(self):
         self.db = self.create_connection()
         self.db.open()
         # Get selection
         name = self.line_edit_player_search.text()
 
         query = QtSql.QSqlQuery(self.db)
-        query.prepare("SELECT Full_Name, Team_Abrv, Position, Games_Played, Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG, SHP, GWG, S, Shot_Percent, FO_Percent FROM players WHERE Full_Name LIKE (?)")
+        query.prepare("SELECT * FROM players WHERE Full_Name LIKE (?)")
         query.bindValue(0, "%{}%".format(name))
         query.exec_()
 
@@ -370,14 +374,14 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
 
         
     # Searches for the goalies within the database based on user inputed name
-    def open_searched_goalie_info(self):
+    def search_goalie(self):
         self.db = self.create_connection()
         self.db.open()
         # Get selection
         name = self.line_edit_goalie_search.text()
         
         query = QtSql.QSqlQuery(self.db)
-        query.prepare("SELECT Full_Name, Team_Abrv, Catches, GP, GS, W, L, OTL, SO, SA, Sv, GA, SvPct, GAA, TOI, G, A, P, PIM FROM goalies WHERE Full_Name LIKE (?)")
+        query.prepare("SELECT * FROM goalies WHERE Full_Name LIKE (?)")
         query.bindValue(0, "%{}%".format(name))
         query.exec_()
         
@@ -387,7 +391,25 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.table_goalie_search_result.setModel(search_model)
         self.table_goalie_search_result.show()        
         self.db.close()
-
+        
+    def open_detailed_search_player(self):
+        i = self.table_player_search_result.selectionModel().currentIndex()
+        id = self.table_player_search_result.model().index(i.row(), 0).data()
+        print(id)
+        dialog = Player_Window(id, False)
+        self.dialogs.append(dialog)
+        dialog.show()
+        return None
+    
+    def open_detailed_search_goalie(self):
+        i = self.table_goalie_search_result.selectionModel().currentIndex()
+        id = self.table_goalie_search_result.model().index(i.row(), 0).data()
+        print(id)
+        dialog = Player_Window(id, True)
+        self.dialogs.append(dialog)
+        dialog.show()
+        return None
+    
     # Gets the player name and the team name from the player stats table
     def get_selected_player(self):
         rows = self.table_player_stats.selectionModel().selectedRows()

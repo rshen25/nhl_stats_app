@@ -61,6 +61,11 @@ PLAYER_GAME_LOG_STATS = ['date', 'opponent.name', 'stat.goals', 'stat.assists', 
 
 PLAYER_GAME_LOG_RENAMED = ['Date', 'Opp', 'G', 'A', 'P', '+/-', 'Shots', 'TOI', 'PIM', 'Hits', 'PPG', 'PPP', 'ShotPct', 'Shifts']
 
+GOALIE_GAME_LOG_STATS = ['date', 'opponent.name', 'stat.gamesStarted', 'stat.decision', 'stat.ot', 'stat.shotsAgainst', 
+                         'stat.goalsAgainst', 'stat.savePercentage', 'stat.shutouts', 'stat.timeOnIce']
+
+GOALIE_GAME_LOG_RENAMED = ['Date', 'Opp', 'GS', 'W/L', 'OT', 'SA', 'GA', 'Sv%', 'SO', 'TOI']
+
 team_cols = ['Team_ID', 'Team_Name', 'Games_Played', 'Wins', 'Losses', 'OT',
              'Points', 'Regulation_Wins', 'ROW', 'Goals_Scored', 'Goals_Against', 
              'Goal_Diff', 'Streak', 'GPG', 'GAPG', 'PP_Percent', 'PK_Percent', 'Conference', 'Division']
@@ -303,12 +308,20 @@ def parse_games(games_data):
     return result
 
 def parse_game_log(game_log):
-    result = pd.DataFrame()
-    
     result = json_normalize(game_log['stats'][0]['splits'])
     
     result = result[PLAYER_GAME_LOG_STATS].copy()
     result.columns = PLAYER_GAME_LOG_RENAMED
+    
+    result.to_csv('test_game_log.csv')
+    
+    return result
+
+def parse_goalie_game_log(game_log):
+    result = json_normalize(game_log['stats'][0]['splits'])
+        
+    result = result[GOALIE_GAME_LOG_STATS].copy()
+    result.columns = GOALIE_GAME_LOG_RENAMED
     
     result.to_csv('test_game_log.csv')
     
