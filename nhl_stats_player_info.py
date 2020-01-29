@@ -9,8 +9,13 @@ class Player_Window(QtWidgets.QMainWindow):
         self.player_id = player_id
         self.isGoalie = isGoalie
         self.player_data = api.get_player_data(player_id)
-        self.player_career_data = api.get_player_career_stats(player_id)
-        self.game_log = api.get_game_log(player_id, '20192020') #TODO: Move out hardcoded string
+        if (isGoalie):
+            self.player_career_data = api.get_goalie_career_stats(player_id)
+            self.game_log = api.get_goalie_game_log(player_id, '20192020') #TODO: Move out hardcoded string
+        else:
+            self.player_career_data = api.get_player_career_stats(player_id)
+            self.game_log = api.get_game_log(player_id, '20192020') #TODO: Move out hardcoded string
+    
         self.setupUi()
         
     def setupUi(self):
@@ -18,9 +23,6 @@ class Player_Window(QtWidgets.QMainWindow):
         self.resize(590, 607)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-#        self.table_season_stats = CustomTable(self.centralwidget)
-#        self.table_season_stats.setGeometry(QtCore.QRect(20, 150, 951, 71))
-#        self.table_season_stats.setObjectName("table_season_stats")
         
         self.label_career_stats = QtWidgets.QLabel(self.centralwidget)
         self.label_career_stats.setGeometry(QtCore.QRect(10, 110, 81, 16))
@@ -88,7 +90,6 @@ class Player_Window(QtWidgets.QMainWindow):
         self.table_game_log.setObjectName("table_game_log")
         self.game_log_model = DataFrameModel(self.game_log)
         self.table_game_log.setModel(self.game_log_model)
-        
 
         # Menu bar
         self.setCentralWidget(self.centralwidget)
@@ -113,6 +114,9 @@ class Player_Window(QtWidgets.QMainWindow):
 #        self.set_current_season_table(self.player_id)
         
         self.display_player_info()
+        
+        self.actionExit.setShortcut('Alt+F4')
+        self.actionExit.triggered.connect(self.close)
         
 
     def retranslateUi(self, MainWindow):

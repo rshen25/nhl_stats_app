@@ -1,5 +1,6 @@
 import api
 import nhl_stats_db as db
+import nhl_stats_app as main
 from PyQt5 import QtCore, QtWidgets, QtSql
 from nhl_stats_boxscore import Boxscore_Window
 from functools import partial
@@ -75,7 +76,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
                 
         self.btn_more_goalie_info = QtWidgets.QPushButton(self.centralwidget)
         self.btn_more_goalie_info.setGeometry(QtCore.QRect(890, 510, 75, 23))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_more_goalie_info.sizePolicy().hasHeightForWidth())
@@ -159,14 +160,15 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
-        
-        self.db = self.create_connection()
-        
+                
         self.set_standings_table()
         self.set_player_stats_table()
-        self.set_goalie_stats_table(self.table_goalie_stats)
+        self.set_goalie_stats_table()
                
         self.create_current_games_buttons(self.gamesLayout)              
+        
+        self.btn_more_player_info.resize(self.btn_more_player_info.sizeHint().width(), self.btn_more_player_info.sizeHint().height())
+        self.btn_more_goalie_info.resize(self.btn_more_goalie_info.sizeHint().width(), self.btn_more_goalie_info.sizeHint().height())
         
         # Set up the more player details button
         self.btn_more_player_info.clicked.connect(self.open_player_info)
@@ -175,14 +177,21 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         # Set up goalie and player search buttons
         self.btn_goalie_search.clicked.connect(self.search_goalie)
         self.btn_player_search.clicked.connect(self.search_player)
+        
+        # Set up update buttons
+        self.btn_update_player_stats.clicked.connect(self.update_player_stats)
+        self.btn_update_goalie_stats.clicked.connect(self.update_goalie_stats)
+        self.btn_update_standings.clicked.connect(self.update_standings)
                 
         # Set up double clicking search tables
         self.table_player_search_result.doubleClicked.connect(self.open_detailed_search_player)
         self.table_goalie_search_result.doubleClicked.connect(self.open_detailed_search_goalie)
-    
-        self.db.close()
-        self.conn.close()
         
+        self.actionExit.setShortcut('Alt+F4')
+        self.actionExit.triggered.connect(self.close)
+        
+        self.conn.close()
+            
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -217,76 +226,109 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
 
     # Sets the database to the standings table
     def set_standings_table(self):
+        self.db = self.create_connection()
+            
         # Set the western conference standings table
+        query = QtSql.QSqlQuery(self.db)
+        query.prepare("""
+                        SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+                        GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
+                        Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
+                        WHERE Division = 'Pacific'
+                        ORDER BY Points DESC
+                        """)
+        query.exec_()
+        
         pacific_model = QtSql.QSqlQueryModel()
-        pacific_model.setQuery("""
-                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
-                            GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
-                            Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
-                            WHERE Division = 'Pacific'
-                            ORDER BY Points DESC
-                            """)
+        pacific_model.setQuery(query)
         
         self.table_pacific_division.setModel(pacific_model)
         
+        query.prepare("""
+                        SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+                        GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
+                        Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
+                        WHERE Division = 'Central'
+                        ORDER BY Points DESC
+                        """)
+        query.exec_()
+        
         central_model = QtSql.QSqlQueryModel()
-        central_model.setQuery("""
-                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
-                            GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
-                            Goals_Scored, Goals_Against, Goal_Diff, Streak FROM teams 
-                            WHERE Division = 'Central'
-                            ORDER BY Points DESC
-                            """)
+        central_model.setQuery(query)
         
         self.table_central_division.setModel(central_model)
         
-        # Set the eastern conference standings table
+        # Set the eastern conference standings table   
+        query.prepare("""
+                        SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+                        GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
+                        Goals_Scored, Goals_Against, Goal_Diff, Streak 
+                        FROM teams WHERE Division = 'Metropolitan'
+                        ORDER BY Points DESC
+                        """)
+        query.exec_()
+        
         metro_model = QtSql.QSqlQueryModel()
-        metro_model.setQuery("""
-                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
-                            GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
-                            Goals_Scored, Goals_Against, Goal_Diff, Streak 
-                            FROM teams WHERE Division = 'Metropolitan'
-                            ORDER BY Points DESC
-                            """)
+        metro_model.setQuery(query)
         self.table_metro_division.setModel(metro_model)
         
+        query.prepare("""
+                        SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
+                        GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
+                        Goals_Scored, Goals_Against, Goal_Diff, Streak 
+                        FROM teams WHERE Division = 'Atlantic'
+                        ORDER BY Points DESC
+                        """)
+        query.exec_()
+        
         atlantic_model = QtSql.QSqlQueryModel()
-        atlantic_model.setQuery("""
-                            SELECT Team_Name, Games_Played, Wins, Losses, OT, Points,
-                            GPG, GAPG, PP_Percent, PK_Percent, Division, Regulation_Wins, ROW,
-                            Goals_Scored, Goals_Against, Goal_Diff, Streak 
-                            FROM teams WHERE Division = 'Atlantic'
-                            ORDER BY Points DESC
-                            """)
+        atlantic_model.setQuery(query)
         self.table_atlantic_division.setModel(atlantic_model)
+        
+        self.db.close()
 
     # Sets the database to the player stats table to enable queries to db
     def set_player_stats_table(self):
+        self.db = self.create_connection()
+        
+        query = QtSql.QSqlQuery(self.db)
+        query.prepare("""
+                      SELECT Full_Name, Team_Abrv, Position, Games_Played,
+                      Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG, SHP,
+                      GWG, S, Shot_Percent, FO_Percent FROM players
+                      ORDER BY Points DESC
+                      """)
+        query.exec_()
+        
         # Set the western conference standings table
         player_model = QtSql.QSqlQueryModel()
-        player_model.setQuery("""
-                              SELECT Full_Name, Team_Abrv, Position, Games_Played,
-                              Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG, SHP,
-                              GWG, S, Shot_Percent, FO_Percent FROM players
-                              ORDER BY Points DESC
-                              """)
+        player_model.setQuery(query)
         
         while(player_model.canFetchMore()):
             player_model.fetchMore()
             
         self.table_player_stats.setModel(player_model)
         
+        self.db.close()
+        
     # Set the goalie stats table with the database
-    def set_goalie_stats_table(self, table_goalie_stats):
+    def set_goalie_stats_table(self):
+        self.db = self.create_connection()
+        
+        query = QtSql.QSqlQuery(self.db)
+        query.prepare("""
+                      SELECT Full_Name, Team_Abrv, Catches, GP, GS, W, L, OTL, SO, SA, Sv,
+                      GA, SvPct, GAA, TOI, G, A, P, PIM FROM goalies
+                      ORDER BY W DESC
+                      """)
+        query.exec_()
+        
         # Set the eastern conference standings table
         goalie_model = QtSql.QSqlQueryModel()
-        goalie_model.setQuery("""
-                              SELECT Full_Name, Team_Abrv, Catches, GP, GS, W, L, OTL, SO, SA, Sv,
-                              GA, SvPct, GAA, TOI, G, A, P, PIM FROM goalies
-                              ORDER BY W DESC
-                              """)
-        table_goalie_stats.setModel(goalie_model)
+        goalie_model.setQuery(query)
+        self.table_goalie_stats.setModel(goalie_model)
+        
+        self.db.close()
             
     # Creates buttons for each current nhl games for the day
     def create_current_games_buttons(self, layout: QtWidgets.QHBoxLayout):
@@ -391,7 +433,8 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.table_goalie_search_result.setModel(search_model)
         self.table_goalie_search_result.show()        
         self.db.close()
-        
+    
+    # Opens the player info window of the double clicked player in the player search result table
     def open_detailed_search_player(self):
         i = self.table_player_search_result.selectionModel().currentIndex()
         id = self.table_player_search_result.model().index(i.row(), 0).data()
@@ -401,6 +444,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         dialog.show()
         return None
     
+    # Opens the player info window of the double clicked goalie in the goalie search result table
     def open_detailed_search_goalie(self):
         i = self.table_goalie_search_result.selectionModel().currentIndex()
         id = self.table_goalie_search_result.model().index(i.row(), 0).data()
@@ -420,6 +464,30 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         rows = self.table_goalie_stats.selectionModel().selectedRows()
         return self.table_goalie_stats.model().index(rows[0].row(), 0).data(), self.table_goalie_stats.model().index(rows[0].row(), 1).data()
                         
+    # Updates the NHL standings table with new up-to-date data from NHL API
+    def update_standings(self):
+        main.get_team_stats()
+        self.set_standings_table()
+        self.table_atlantic_division.show()
+        self.table_central_division.show()
+        self.table_metro_division.show()
+        self.table_pacific_division.show()
+        print("Updated Standings")
+    
+    # Updates the player leaderboards from the NHL API
+    def update_player_stats(self):
+        main.get_stat_leaders()
+        self.set_player_stats_table()
+        print("Updated Players")
+        self.table_player_stats.show()
+    
+    # Updates the goalie leaderboards from the NHL API
+    def update_goalie_stats(self):
+        main.get_goalie_leaders()
+        self.set_goalie_stats_table()
+        print("Updated Goalies")
+        self.table_goalie_stats.show()
+    
     def closeEvent(self, event):
         super(NHL_MainWindow, self).closeEvent(event)
         self.db.close()

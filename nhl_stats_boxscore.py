@@ -122,6 +122,9 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
         
+        self.actionExit.setShortcut('Alt+F4')
+        self.actionExit.triggered.connect(self.close)
+        
         QtCore.QMetaObject.connectSlotsByName(self)        
         
         self.retranslateUi(self)
@@ -151,7 +154,7 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         # Create the team stats
         for stats in self.boxscore_data.away_team_stats:
             label = QtWidgets.QLabel()
-            label.setText(stats + " : " + str(self.boxscore_data.away_team_stats[stats]))
+            label.setText(stats + "  " + str(self.boxscore_data.away_team_stats[stats]))
             label.setScaledContents(True)
             label.setWordWrap(True)
             self.layout_away_team_stats.addWidget(label)
@@ -160,7 +163,7 @@ class Boxscore_Window(QtWidgets.QMainWindow):
             label = QtWidgets.QLabel()
             label.setScaledContents(True)
             label.setWordWrap(True)
-            label.setText(stats + " : " + str(self.boxscore_data.home_team_stats[stats]))
+            label.setText(stats + "  " + str(self.boxscore_data.home_team_stats[stats]))
             self.layout_home_team_stats.addWidget(label)
             
         # Create the goals Labels
