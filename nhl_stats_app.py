@@ -1,6 +1,6 @@
 import api
 import pandas as pd
-import sys
+from sys import argv
 import nhl_parse_const as pc
 import nhl_stats_db as db
 import nhl_main_window as MainWindow
@@ -16,11 +16,11 @@ def init():
     
     conn.close()
     
-#    get_team_stats()
+    get_team_stats()
     create_teams_dict()
         
-#    get_stat_leaders()
-#    get_goalie_leaders()
+    get_stat_leaders()
+    get_goalie_leaders()
 
 # Saves all player ids for every team
 def get_and_save_player_ids():

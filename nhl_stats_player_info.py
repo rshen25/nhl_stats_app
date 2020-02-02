@@ -1,4 +1,5 @@
 import api
+import nhl_parse_const as pc
 from PyQt5 import QtCore, QtWidgets, QtSql
 from custom_table import CustomTable
 from DataFrameModel import DataFrameModel
@@ -11,10 +12,10 @@ class Player_Window(QtWidgets.QMainWindow):
         self.player_data = api.get_player_data(player_id)
         if (isGoalie):
             self.player_career_data = api.get_goalie_career_stats(player_id)
-            self.game_log = api.get_goalie_game_log(player_id, '20192020') #TODO: Move out hardcoded string
+            self.game_log = api.get_goalie_game_log(player_id, pc.CURRENT_SEASON)
         else:
             self.player_career_data = api.get_player_career_stats(player_id)
-            self.game_log = api.get_game_log(player_id, '20192020') #TODO: Move out hardcoded string
+            self.game_log = api.get_game_log(player_id, pc.CURRENT_SEASON)
     
         self.setupUi()
         
@@ -111,17 +112,14 @@ class Player_Window(QtWidgets.QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(self)
         self.db = self.create_connection()
         
-#        self.set_current_season_table(self.player_id)
-        
         self.display_player_info()
         
         self.actionExit.setShortcut('Alt+F4')
         self.actionExit.triggered.connect(self.close)
-        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Player Information - {}".format(self.player_data.loc[0, 'Full_Name'])))
         self.label_player_age.setText(_translate("MainWindow", "Age:"))
         self.label_player_height.setText(_translate("MainWindow", "Height:"))
         self.label_player_weight.setText(_translate("MainWindow", "Weight:"))
@@ -135,23 +133,6 @@ class Player_Window(QtWidgets.QMainWindow):
         self.label_game_log.setText(_translate("MainWindow", "Game Log"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Close"))
-
-    # queries the database and populates the current season stats table
-#    def set_current_season_table(self, player_id):
-#        model = QtSql.QSqlQueryModel()
-#        if self.isGoalie:
-#            model.setQuery("""
-#                           SELECT Games_Played, Games_Started, Wins, Losses,
-#                              OT, Shutouts, Saves, Save_Percentage, GAA, GA, SA FROM goalies
-#                           WHERE Player_ID = {}
-#                           """.format(player_id))
-#        else:
-#            model.setQuery("""
-#                           SELECT Games_Played, Goals, Assists, Points, Plus_Minus, PIM, PPG, PPP, SHG,
-#                           SHP, GWG, OTG, S, Shot_Percent, Blk, FO_Percent, Hits FROM players
-#                           WHERE Player_ID = {}
-#                           """.format(player_id))
-#        self.table_season_stats.setModel(model)
 
     # Create a connection to the database
     def create_connection(self):
@@ -170,7 +151,6 @@ class Player_Window(QtWidgets.QMainWindow):
     
     # Populates and displays the player information such as name, age, team, etc.
     def display_player_info(self):
-        
         # Set label names
         self.label_player_name.setText(self.player_data.loc[0, 'Full_Name'])
         self.label_player_name.setScaledContents(True)

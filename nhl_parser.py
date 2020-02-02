@@ -1,7 +1,5 @@
 import pandas as pd
 import nhl_parse_const as pc
-from pandas.io.json import json_normalize
-
 
 # Removes unnecessary columns and returns every team in the NHL and their season stats
 def parse_teams(json_data):
@@ -13,14 +11,14 @@ def parse_teams(json_data):
     division = pd.DataFrame()
     abbreviation = pd.DataFrame(columns=['abbreviation'])
     for index, k in enumerate(json_data['teams']):
-        tmp = json_normalize(k['teamStats'][0]['splits'][0])
+        tmp = pd.json_normalize(k['teamStats'][0]['splits'][0])
         team_stats = team_stats.append(tmp, ignore_index = True)
         
         # Get conference/division
-        tmp_c = json_normalize(k['conference'])
+        tmp_c = pd.json_normalize(k['conference'])
         conference = conference.append(tmp_c, ignore_index = True)
         
-        tmp_d = json_normalize(k['division'])
+        tmp_d = pd.json_normalize(k['division'])
         division = division.append(tmp_d, ignore_index = True)
         
         abbreviation.loc[index] = k['abbreviation']
@@ -43,10 +41,10 @@ def parse_standings(json_data):
     del json_data['copyright']
     
     # Normalize the json data and separate the standings based on division
-    metro = json_normalize(json_data['records'][0]['teamRecords'])
-    atlantic = json_normalize(json_data['records'][1]['teamRecords'])
-    central = json_normalize(json_data['records'][2]['teamRecords'])
-    pacific = json_normalize(json_data['records'][3]['teamRecords'])
+    metro = pd.json_normalize(json_data['records'][0]['teamRecords'])
+    atlantic = pd.json_normalize(json_data['records'][1]['teamRecords'])
+    central = pd.json_normalize(json_data['records'][2]['teamRecords'])
+    pacific = pd.json_normalize(json_data['records'][3]['teamRecords'])
     
     # Calculate the goal differential for each team and filter 
     metro = calculate_goal_difference(metro)
@@ -76,7 +74,7 @@ def calculate_goal_difference(df):
 def get_standing_stats(division_json):
     standings = pd.DataFrame()
     for k in division_json:
-        tmp = json_normalize(k['teamRecords'])
+        tmp = pd.json_normalize(k['teamRecords'])
         standings = standings.append(tmp, ignore_index=True)
     return standings
 
@@ -95,7 +93,7 @@ def parse_player_ids(team_player_data):
 # Parses the player data from the NHL API and filters out unwanted data and only leaves
 # the desired data as described in PLAYER_DATA_WANTED
 def parse_player_data(player_data):
-    result = json_normalize(player_data['people'])
+    result = pd.json_normalize(player_data['people'])
     
     try:
         result = result[pc.PLAYER_DATA_WANTED]
@@ -111,7 +109,7 @@ def parse_player_data(player_data):
 # the desired data as described in STAT_LEADER_WANTED
 def parse_stat_leaders(data):
     try:
-        result = json_normalize(data['data'])
+        result = pd.json_normalize(data['data'])
         
         result = result[pc.STAT_LEADER_WANTED].copy()        
         result.columns = pc.STAT_LEADER_RENAMED
@@ -126,7 +124,7 @@ def parse_stat_leaders(data):
 # the desired data as described in GOALIE_LEADER_WANTED
 def parse_goalie_leader_stats(goalie_data):
     try:
-        result = json_normalize(goalie_data['data'])
+        result = pd.json_normalize(goalie_data['data'])
         
         result = result[pc.GOALIE_LEADER_WANTED].copy()        
         result.columns = pc.GOALIE_LEADER_RENAMED
@@ -141,7 +139,7 @@ def parse_goalie_leader_stats(goalie_data):
 def parse_player_career_stats(player_stats):
     career_stats = pd.DataFrame()
     for stats in player_stats['stats'][0]['splits']:
-        tmp = json_normalize(stats)
+        tmp = pd.json_normalize(stats)
         career_stats = pd.concat([career_stats, tmp], ignore_index=True, sort=False)
 
     career_stats = career_stats[['season', 'league.name', 'team.name','stat.games', 'stat.goals',
@@ -163,7 +161,7 @@ def parse_player_career_stats(player_stats):
 def parse_goalie_career_stats(player_stats):
     career_stats = pd.DataFrame()
     for stats in player_stats['stats'][0]['splits']:
-        tmp = json_normalize(stats)
+        tmp = pd.json_normalize(stats)
         career_stats = pd.concat([career_stats, tmp], ignore_index=True, sort=False)
 
     career_stats = career_stats[['season', 'league.name', 'team.name','stat.games', 'stat.gamesStarted', 'stat.wins',
@@ -187,7 +185,7 @@ def parse_games(games_data):
     
     games = pd.DataFrame()
     
-    games = json_normalize(games_data['dates'][0]['games'])
+    games = pd.json_normalize(games_data['dates'][0]['games'])
     result = games[['gamePk', 'teams.away.team.id', 'teams.home.team.id']].copy()
     result.columns = ['gameID', 'awayID', 'homeID']
     
@@ -195,7 +193,7 @@ def parse_games(games_data):
 
 # Parses the game log json data from the NHL API
 def parse_game_log(game_log):
-    result = json_normalize(game_log['stats'][0]['splits'])
+    result = pd.json_normalize(game_log['stats'][0]['splits'])
     
     result = result[pc.PLAYER_GAME_LOG_STATS].copy()
     result.columns = pc.PLAYER_GAME_LOG_RENAMED
@@ -204,7 +202,7 @@ def parse_game_log(game_log):
 
 # Parses the goalie game log json data from the NHL API
 def parse_goalie_game_log(game_log):
-    result = json_normalize(game_log['stats'][0]['splits'])
+    result = pd.json_normalize(game_log['stats'][0]['splits'])
         
     result = result[pc.GOALIE_GAME_LOG_STATS].copy()
     result.columns = pc.GOALIE_GAME_LOG_RENAMED

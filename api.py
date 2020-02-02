@@ -12,7 +12,6 @@ GOALIE_STATS_BASE = "https://api.nhle.com/stats/rest/en/goalie/summary?isAggrega
 
 def get_players(ids):
     result = requests.get("{}/people/".format(BASE)).json()
-#    result = pd.read_json(result)
     return result
 
 def get_team(id):
@@ -25,7 +24,6 @@ def get_all_team_stats():
         return result
     
 def get_standings():
-    # https://statsapi.web.nhl.com/api/v1/teams/?expand=team.stats
     response = requests.get("{}/standings".format(BASE))
     if response.status_code == 200:
         response = response.json()
@@ -61,18 +59,6 @@ def get_player_ids_from_team(team_id):
         return result
     else:
         return None
-    
-    
-#    response = requests.get("{}/player/byTeam/{}".format(RECORDS_BASE, team_id))
-#    print(response.status_code)
-#    if (response.status_code == 200):
-#        response = response.json()
-#        result = parse.parse_player_ids(response)
-#        result.to_csv("resources/player_ids/{}_players.csv".format(team_id))
-#        return result
-#    else:
-#        return None
-
 
 # Gets the stats for a player via the NHL API, parses it so that it contains desired statistics
 # and returns in a pandas DataFrame
@@ -157,16 +143,7 @@ def get_live_game_feed(id):
         return None
 
 # Gets the point leaders of all active players within the NHL
-def get_stat_leaders(season, page):
-    
-    # Testing ------------------------------------
-#    with open('summary.json', 'r') as data_file:
-#        data = json.load(data_file)
-#        result = parse.parse_stat_leaders(data)
-#    
-#    return result
-    # --------------------------------------------
-    
+def get_stat_leaders(season, page): 
     response = requests.get(
             "{}&start={}&limit=100&factCayenneExp=gamesPlayed%3E=1&cayenneExp=gameTypeId=2%20and%20seasonId%3C={}%20and%20seasonId%3E={}"
             .format(STAT_LEADERS_BASE, page * 100, season, season))

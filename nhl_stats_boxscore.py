@@ -132,7 +132,7 @@ class Boxscore_Window(QtWidgets.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Boxscore - {} @ {}".format(self.boxscore_data.away_team, self.boxscore_data.home_team)))
         self.label_away_team_name.setText(_translate("MainWindow", "Away Team:"))
         self.label_home_team_name.setText(_translate("MainWindow", "Home Team:"))
         self.label_goals.setText(_translate("MainWindow", "Goals"))

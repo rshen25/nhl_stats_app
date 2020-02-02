@@ -194,7 +194,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
             
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "NHL Stats"))
         self.label_standings.setText(_translate("MainWindow", "Standings"))
         self.label_pacific_division.setText(_translate("MainWindow", "Pacific Division"))
         self.label_metro_division.setText(_translate("MainWindow", "Metropolitan Division"))
@@ -346,7 +346,12 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
             print(e)
             
     def open_boxscore(self, index):
-        boxscore_data = api.get_live_game_feed(self.games.iloc[index]['gameID'])
+        try:
+            boxscore_data = api.get_live_game_feed(self.games.iloc[index]['gameID'])
+        except UnboundLocalError as e:
+            boxscore_data = None
+            print(e)
+            
         dialog = Boxscore_Window(boxscore_data)
         self.dialogs.append(dialog)
         dialog.show()
