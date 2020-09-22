@@ -18,22 +18,43 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         
     def setupUi(self):
         self.setObjectName("MainWindow")
-        self.resize(1198, 968)
+        self.resize(1040, 880)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-                
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        
+        # Games for the day
+        self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+        self.gamesLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)        
+        self.gamesLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.gamesLayout.setContentsMargins(5, 5, 5, 5)
+        self.gamesLayout.setObjectName("gamesLayout")
+        self.gridLayout_4.addLayout(self.gamesLayout, 0, 0, 1, 1)
+        
+        self.label_games = QtWidgets.QLabel(self.centralwidget)
+        self.label_games.setObjectName("label_games")
+        self.gamesLayout.addWidget(self.label_games)
+                        
         # Player stats
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.gridLayout_3.setColumnStretch(0, 8)
+        self.gridLayout_3.setColumnStretch(1, 2)
+        #self.gridLayout_4.addLayout(self.gridLayout_3)
+        
         self.label_player_stats = QtWidgets.QLabel(self.centralwidget)
-        self.label_player_stats.setGeometry(QtCore.QRect(10, 70, 81, 16))
         self.label_player_stats.setObjectName("label_player_stats")
+        self.gridLayout_3.addWidget(self.label_player_stats, 0, 0, 1, 1)
                         
         self.btn_update_player_stats = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_player_stats.setGeometry(QtCore.QRect(890, 290, 75, 23))
         self.btn_update_player_stats.setObjectName("btn_update_player_stats")
+        self.gridLayout_3.addWidget(self.btn_update_player_stats, 0, 1, 1, 1)
         
         self.table_player_stats = CustomTable(self.centralwidget)
-        self.table_player_stats.setGeometry(QtCore.QRect(10, 90, 871, 221))
         self.table_player_stats.setObjectName("table_player_stats")
+        self.gridLayout_3.addWidget(self.table_player_stats, 2, 0, 2, 1)
                 
         self.btn_more_player_info = QtWidgets.QPushButton(self.centralwidget)
         self.btn_more_player_info.setGeometry(QtCore.QRect(890, 260, 75, 23))
@@ -43,104 +64,129 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.btn_more_player_info.sizePolicy().hasHeightForWidth())
         self.btn_more_player_info.setSizePolicy(sizePolicy)
         self.btn_more_player_info.setObjectName("btn_more_player_info")
+        self.gridLayout_3.addWidget(self.btn_more_player_info, 3, 1, 1, 1)
                 
         # Player Search
         self.line_edit_player_search = QtWidgets.QLineEdit(self.centralwidget)
-        self.line_edit_player_search.setGeometry(QtCore.QRect(890, 90, 191, 31))
         self.line_edit_player_search.setObjectName("line_edit_player_search")
         
         self.btn_player_search = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_player_search.setGeometry(QtCore.QRect(1090, 90, 81, 31))
         self.btn_player_search.setObjectName("btn_player_search")
         
         self.table_player_search_result = CustomTable(self.centralwidget)
-        self.table_player_search_result.setGeometry(QtCore.QRect(890, 130, 291, 121))
         self.table_player_search_result.setObjectName("table_player_search_result")
+        self.gridLayout_3.addWidget(self.table_player_search_result, 3, 1, 1, 2)
+        self.gridLayout_4.addLayout(self.gridLayout_3, 1, 0, 1, 1)
+        
+        self.gridLayout_5 = QtWidgets.QGridLayout()
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.gridLayout_3.addLayout(self.gridLayout_5, 1, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.btn_player_search, 1, 2, 1, 1)
+        self.gridLayout_5.addWidget(self.line_edit_player_search, 1, 0, 1, 1)
         
         # Goalie stats
+        self.gridLayout_2 = QtWidgets.QGridLayout()
+        self.gridLayout_2.setObjectName("gridLayout_2")        
+        
         self.label_goalie_stats = QtWidgets.QLabel(self.centralwidget)
-        self.label_goalie_stats.setGeometry(QtCore.QRect(20, 320, 81, 16))
         self.label_goalie_stats.setObjectName("label_goalie_stats")
+        self.gridLayout_2.addWidget(self.label_goalie_stats, 0, 0, 1, 1)
         
         self.table_goalie_stats = CustomTable(self.centralwidget)
-        self.table_goalie_stats.setGeometry(QtCore.QRect(10, 340, 871, 221))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.table_goalie_stats.sizePolicy().hasHeightForWidth())
+        self.table_goalie_stats.setSizePolicy(sizePolicy)
         self.table_goalie_stats.setObjectName("table_goalie_stats")
+        self.gridLayout_2.addWidget(self.table_goalie_stats, 1, 0, 4, 1)
         
         self.btn_update_goalie_stats = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_goalie_stats.setGeometry(QtCore.QRect(890, 540, 75, 23))
         self.btn_update_goalie_stats.setObjectName("btn_update_goalie_stats")
+        self.gridLayout_2.addWidget(self.btn_update_goalie_stats, 0, 1, 1, 1)
         
         self.btn_update_standings = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_update_standings.setGeometry(QtCore.QRect(90, 570, 75, 23))
         self.btn_update_standings.setObjectName("btn_update_standings")
                 
         self.btn_more_goalie_info = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_more_goalie_info.setGeometry(QtCore.QRect(890, 510, 75, 23))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btn_more_goalie_info.sizePolicy().hasHeightForWidth())
         self.btn_more_goalie_info.setSizePolicy(sizePolicy)
         self.btn_more_goalie_info.setObjectName("btn_more_goalie_info")
+        self.gridLayout_2.addWidget(self.btn_more_goalie_info, 3, 1, 1, 1)
         
         # Goalie Search
         self.line_edit_goalie_search = QtWidgets.QLineEdit(self.centralwidget)
-        self.line_edit_goalie_search.setGeometry(QtCore.QRect(890, 340, 191, 31))
         self.line_edit_goalie_search.setObjectName("line_edit_goalie_search")
         
         self.btn_goalie_search = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_goalie_search.setGeometry(QtCore.QRect(1090, 340, 81, 31))
         self.btn_goalie_search.setObjectName("btn_goalie_search")
         
         self.table_goalie_search_result = CustomTable(self.centralwidget)
-        self.table_goalie_search_result.setGeometry(QtCore.QRect(890, 380, 291, 121))
         self.table_goalie_search_result.setObjectName("table_goalie_search_result")
+        self.gridLayout_2.addWidget(self.table_goalie_search_result, 2, 1, 1, 2)
         
-        # Standings        
+        self.gridLayout_2.setColumnStretch(0, 8)
+        self.gridLayout_2.setColumnStretch(1, 2)
+        self.gridLayout_4.addLayout(self.gridLayout_2, 2, 0, 1, 1)
+        
+        self.gridLayout_6 = QtWidgets.QGridLayout()
+        self.gridLayout_6.setObjectName("gridLayout_5")
+        self.gridLayout_2.addLayout(self.gridLayout_6, 1, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.line_edit_goalie_search, 0, 0, 1, 1)
+        self.gridLayout_6.addWidget(self.btn_goalie_search, 0, 1, 1, 1)
+        
+        # Standings 
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setHorizontalSpacing(6)
+        self.gridLayout.setObjectName("gridLayout")
+            
         self.table_pacific_division = CustomTable(self.centralwidget)
-        self.table_pacific_division.setGeometry(QtCore.QRect(10, 600, 581, 151))
         self.table_pacific_division.setObjectName("table_pacific_division")
+        self.gridLayout.addWidget(self.table_pacific_division, 3, 0, 1, 1)
                 
         self.table_metro_division = CustomTable(self.centralwidget)
-        self.table_metro_division.setGeometry(QtCore.QRect(610, 600, 581, 151))
         self.table_metro_division.setObjectName("table_metro_division")
+        self.gridLayout.addWidget(self.table_metro_division, 3, 1, 1, 1)
         
         self.label_standings = QtWidgets.QLabel(self.centralwidget)
-        self.label_standings.setGeometry(QtCore.QRect(10, 570, 47, 13))
         self.label_standings.setObjectName("label_standings")
+        self.gridLayout.addWidget(self.label_standings, 0, 0, 1, 1)
         
         self.label_pacific_division = QtWidgets.QLabel(self.centralwidget)
-        self.label_pacific_division.setGeometry(QtCore.QRect(10, 580, 121, 16))
         self.label_pacific_division.setObjectName("label_pacific_division")
+        self.gridLayout.addWidget(self.label_pacific_division, 2, 0, 1, 1)
         
         self.label_metro_division = QtWidgets.QLabel(self.centralwidget)
-        self.label_metro_division.setGeometry(QtCore.QRect(610, 580, 121, 16))
         self.label_metro_division.setObjectName("label_metro_division")
+        self.gridLayout.addWidget(self.label_metro_division, 2, 1, 1, 1)
         
         self.table_central_division = CustomTable(self.centralwidget)
-        self.table_central_division.setGeometry(QtCore.QRect(10, 770, 581, 151))
         self.table_central_division.setObjectName("table_central_division")
+        self.gridLayout.addWidget(self.table_central_division, 5, 0, 1, 1)
         
         self.table_atlantic_division = CustomTable(self.centralwidget)
-        self.table_atlantic_division.setGeometry(QtCore.QRect(610, 770, 581, 151))
         self.table_atlantic_division.setObjectName("table_atlantic_division")
+        self.gridLayout.addWidget(self.table_atlantic_division, 5, 1, 1, 1)
         
         self.label_atlantic_division = QtWidgets.QLabel(self.centralwidget)
-        self.label_atlantic_division.setGeometry(QtCore.QRect(610, 750, 121, 16))
         self.label_atlantic_division.setObjectName("label_atlantic_division")
+        self.gridLayout.addWidget(self.label_atlantic_division, 4, 1, 1, 1)
 
         self.label_central_division = QtWidgets.QLabel(self.centralwidget)
-        self.label_central_division.setGeometry(QtCore.QRect(10, 750, 121, 16))
         self.label_central_division.setObjectName("label_central_division")
+        self.gridLayout.addWidget(self.label_central_division, 4, 0, 1, 1)
         
-        # Games for the day
-        self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1181, 51))
-        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
-        self.gamesLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
-        self.gamesLayout.setContentsMargins(0, 0, 0, 0)
-        self.gamesLayout.setObjectName("gamesLayout")
-                        
+        self.gridLayout.addWidget(self.btn_update_standings, 0, 1, 1, 1)
+        self.gridLayout_4.addLayout(self.gridLayout, 3, 0, 1, 1)
+        
+        self.gridLayout_4.setRowMinimumHeight(0, 20)
+        self.gridLayout_4.setRowMinimumHeight(1, 310)
+        self.gridLayout_4.setRowMinimumHeight(2, 310)
+        self.gridLayout_4.setRowMinimumHeight(3, 310)
+                                            
         # Menu bar
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
@@ -160,12 +206,12 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
+        
+        self.create_current_games_buttons(self.gamesLayout) 
                 
         self.set_standings_table()
         self.set_player_stats_table()
         self.set_goalie_stats_table()
-               
-        self.create_current_games_buttons(self.gamesLayout)              
         
         self.btn_more_player_info.resize(self.btn_more_player_info.sizeHint().width(), self.btn_more_player_info.sizeHint().height())
         self.btn_more_goalie_info.resize(self.btn_more_goalie_info.sizeHint().width(), self.btn_more_goalie_info.sizeHint().height())
@@ -195,6 +241,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "NHL Stats"))
+        self.label_games.setText(_translate("MainWindow", "Today\'s Games:"))
         self.label_standings.setText(_translate("MainWindow", "Standings"))
         self.label_pacific_division.setText(_translate("MainWindow", "Pacific Division"))
         self.label_metro_division.setText(_translate("MainWindow", "Metropolitan Division"))

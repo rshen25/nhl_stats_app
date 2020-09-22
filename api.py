@@ -1,4 +1,4 @@
-# Taken and altered from: https://github.com/mhostetter/nhl
+# Altered and used as a base from: https://github.com/mhostetter/nhl
 
 import requests
 import boxscore as bs
@@ -19,40 +19,25 @@ def get_team(id):
     return result
     
 def get_all_team_stats():
-        result = requests.get("{}/teams/?expand=team.stats".format(BASE)).json()
-        result = parse.parse_teams(result)
-        return result
+        response = requests.get("{}/teams/?expand=team.stats".format(BASE))
+        if response.status_code == 200:
+            result = parse.parse_teams(response.json())
+            return result
+        else:
+            return None
     
 def get_standings():
     response = requests.get("{}/standings".format(BASE))
     if response.status_code == 200:
         response = response.json()
         result = parse.parse_standings(response)
-    
-    # TESTING --------------------------
-#    with open('standings.json', 'r') as json_file:
-#        response = json.load(json_file)
-#        result = parse.parse_standings(response)
-    # -------------------------------------
         return result
+    else:
+        return None
 
 # Gets the player Ids and their name for a given team in a pandas DataFrame and writes it into a csv file
 def get_player_ids_from_team(team_id):    
-    
-    #TESTING PURPOSES -----------------------------
-#    with open('test_roster.json', 'r') as json_file:
-#        response = json.load(json_file)
-#        #print(response['data'][0]['id'])
-#        #response = response.json()
-#        result = parse.parse_player_ids(response)
-#        result.to_csv("test_players.csv".format(team_id))
-#       json.dump(response, json_file, sort_keys=True, indent=4)
-#        return result
-    
-    #----------------------------------------------
-    
     response = requests.get("{}/teams/{}/roster".format(BASE, team_id))
-#    print(response.status_code)
     if (response.status_code == 200):
         response = response.json()
         result = parse.parse_player_ids(response)
@@ -62,31 +47,17 @@ def get_player_ids_from_team(team_id):
 
 # Gets the stats for a player via the NHL API, parses it so that it contains desired statistics
 # and returns in a pandas DataFrame
-def get_player_stats(player_id, season):
-    
+def get_player_stats(player_id, season):    
     response = requests.get("{}/people/{}".format(BASE, player_id))
     if response.status_code == 200:
         player_data = response.json()
     
     response = requests.get("{}/people/{}/stats?stats=statsSingleSeason&season={}".format(BASE, player_id, season))
-#    print(response.status_code)
     if response.status_code == 200:
         player_stats = response.json()
         # Parse the data to include only stats that we want
         result = parse.parse_player_stats(player_data, player_stats)
     return result
-    
-    # TESTING ----------------------------
-#    with open('test_player_data.json', 'r') as data_file:
-#        player_data = json.load(data_file)
-#        
-#    with open('test_player_stats.json', 'r') as stats_file:
-#        player_stats = json.load(stats_file)
-#        
-#    result = parse.parse_player_stats(player_data, player_stats)
-#    return result
-    
-    # ------------------------------------
 
 # Gets the player data via the NHL API, parses it and returns it in a pandas dataframe
 def get_player_data(player_id):

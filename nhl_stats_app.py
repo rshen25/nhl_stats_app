@@ -1,6 +1,6 @@
 import api
 import pandas as pd
-from sys import argv
+import sys
 import nhl_parse_const as pc
 import nhl_stats_db as db
 import nhl_main_window as MainWindow
@@ -32,7 +32,6 @@ def get_and_save_player_ids():
             return None
         else:
             all_player_ids = all_player_ids.append(result)
-    all_player_ids.to_csv("resources/player_ids/players.csv", index=False)
     return all_player_ids
     
 # Makes a request to get all the teams stats and adds it to the database
@@ -43,11 +42,17 @@ def get_team_stats():
         team_stats = api.get_all_team_stats()
         team_standings = api.get_standings()
         
-        # Join the stats and standings table into one
-        team_stats = team_stats.merge(team_standings, on=['Team_ID', 'Team_Name'])
+        # If was not able to get the team stats from API
+        if team_stats is None or team_standings is None:
+            c = conn.cursor()
+            team_stats = c.execute("SELECT * FROM teams")
+        else:
+            # Join the stats and standings table into one
+            team_stats = team_stats.merge(team_standings, on=['Team_ID', 'Team_Name'])
             
-        # Update the database
-        team_stats.to_sql('teams', conn, if_exists='replace', index=False)
+            # Update the database
+            team_stats.to_sql('teams', conn, if_exists='replace', index=False)
+            
         conn.close()
         return team_stats
     except Error as e:
@@ -57,12 +62,16 @@ def get_team_stats():
 # and inserts it into the database.
 def get_stat_leaders():
     conn = db.create_connection('nhl_stats.db')
-    
+    result = 0
     stat_leaders = pd.DataFrame()
     for i in range(9):
         result = api.get_stat_leaders(pc.CURRENT_SEASON, i)
+        if result is None:
+            c = conn.cursor()
+            break
         stat_leaders = pd.concat([stat_leaders, result], ignore_index=True)
-    stat_leaders.to_sql('players', con=conn, if_exists='replace', index=False)
+    if result is not None:
+        stat_leaders.to_sql('players', con=conn, if_exists='replace', index=False)
     conn.close()
 
 # Gets the stats of all NHL goalies as shown in the NHL stat leader page, filters out unwanted stats,
@@ -71,9 +80,11 @@ def get_goalie_leaders():
     conn = db.create_connection('nhl_stats.db')
     goalie_leaders = pd.DataFrame()
     result = api.get_goalie_stats(pc.CURRENT_SEASON)
-    goalie_leaders = pd.concat([goalie_leaders, result], ignore_index=True)
-
-    goalie_leaders.to_sql('goalies', con=conn, if_exists='replace', index=False)
+    
+    if result is not None:
+        goalie_leaders = pd.concat([goalie_leaders, result], ignore_index=True)
+        goalie_leaders.to_sql('goalies', con=conn, if_exists='replace', index=False)
+        
     conn.close()    
 
 def create_teams_dict():

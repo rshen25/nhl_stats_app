@@ -7,194 +7,211 @@
     <x>0</x>
     <y>0</y>
     <width>1198</width>
-    <height>968</height>
+    <height>965</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_standings">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>580</y>
-      <width>47</width>
-      <height>13</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Standings</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_west_conference">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>590</y>
-      <width>121</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Western Conference</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_east_conference">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>590</y>
-      <width>121</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Eastern Conference</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_player_stats">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>90</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Player Stats</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_goalie_stats">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>340</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Goalies Stats</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_update_player_stats">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>90</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Update</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_update_goalie_stats">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>340</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Update</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_update_standings">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>580</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Update</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_4">
-    <property name="geometry">
-     <rect>
-      <x>1110</x>
-      <y>330</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_5">
-    <property name="geometry">
-     <rect>
-      <x>1030</x>
-      <y>330</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
-   <widget class="QTableView" name="table_west_standings">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>610</y>
-      <width>581</width>
-      <height>311</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTableView" name="table_player_stats">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>110</y>
-      <width>1181</width>
-      <height>221</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTableView" name="table_goalie_stats">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>360</y>
-      <width>1181</width>
-      <height>221</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTableView" name="table_east_standings">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>610</y>
-      <width>581</width>
-      <height>311</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1181</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="gamesLayout" stretch="0">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <property name="leftMargin">
+       <number>10</number>
+      </property>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>10</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_games">
+        <property name="text">
+         <string>Today's Games:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QGridLayout" name="gridLayout_3" columnstretch="8,0,0">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_player_stats">
+        <property name="text">
+         <string>Player Stats</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="btn_update_player_stats">
+        <property name="text">
+         <string>Update</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="line_edit_player_search"/>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="btn_player_search">
+          <property name="text">
+           <string>Search</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="9" column="1">
+       <widget class="QTableView" name="table_player_search_result"/>
+      </item>
+      <item row="5" column="0" rowspan="5">
+       <widget class="QTableView" name="table_player_stats"/>
+      </item>
+      <item row="10" column="1">
+       <widget class="QPushButton" name="btn_more_player_info">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>More Details</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0" columnstretch="8,2,0">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_goalie_stats">
+        <property name="text">
+         <string>Goalies Stats</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="btn_more_goalie_info">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>More Details</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" rowspan="5">
+       <widget class="QTableView" name="table_goalie_stats">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="2">
+       <widget class="QTableView" name="table_goalie_search_result"/>
+      </item>
+      <item row="2" column="1">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="line_edit_goalie_search"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="btn_goalie_search">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="btn_update_goalie_stats">
+        <property name="text">
+         <string>Update</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="3" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="horizontalSpacing">
+       <number>6</number>
+      </property>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_east_conference_2">
+        <property name="text">
+         <string>Atlantic Division</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QTableView" name="table_west_standings_2"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_west_conference_2">
+        <property name="text">
+         <string>Central Division</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QTableView" name="table_east_standings_2"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QTableView" name="table_west_standings"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_west_conference">
+        <property name="text">
+         <string>Pacific Division</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_east_conference">
+        <property name="text">
+         <string>Metropolitan Division</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QTableView" name="table_east_standings"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_standings">
+        <property name="text">
+         <string>Standings</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="btn_update_standings">
+        <property name="text">
+         <string>Update</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -205,8 +222,20 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
