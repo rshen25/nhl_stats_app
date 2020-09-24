@@ -11,37 +11,43 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         
     def setupUi(self):
         self.setObjectName("MainWindow")
-        self.resize(867, 748)
+        self.resize(860, 750)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName("gridLayout")
         
         # Home Player Stats
         self.table_home_stats = CustomTable(self.centralwidget)
-        self.table_home_stats.setGeometry(QtCore.QRect(0, 60, 661, 321))
+        #self.table_home_stats.setGeometry(QtCore.QRect(0, 60, 661, 321))
         self.table_home_stats.setObjectName("table_home_stats")
         home_model = DataFrameModel(self.boxscore_data.home_player_stats)
-        self.table_home_stats.setModel(home_model)        
+        self.table_home_stats.setModel(home_model)    
+        self.gridLayout.addWidget(self.table_home_stats, 2, 0, 1, 1)
         
         # Away Player Stats
         self.table_away_stats = CustomTable(self.centralwidget)
-        self.table_away_stats.setGeometry(QtCore.QRect(10, 440, 651, 261))
+        #self.table_away_stats.setGeometry(QtCore.QRect(10, 440, 651, 261))
         self.table_away_stats.setObjectName("table_away_stats")
         away_model = DataFrameModel(self.boxscore_data.away_player_stats)
         self.table_away_stats.setModel(away_model)
                         
         # Goals Display        
         self.label_goals = QtWidgets.QLabel(self.centralwidget)
-        self.label_goals.setGeometry(QtCore.QRect(740, 10, 47, 13))
-        self.label_goals.setObjectName("label_goals")  
+        #self.label_goals.setGeometry(QtCore.QRect(740, 10, 47, 13))
+        self.label_goals.setObjectName("label_goals")
+        self.gridLayout.addWidget(self.label_goals, 0, 1, 1, 1)
         
         self.scrollArea_goals = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea_goals.setGeometry(QtCore.QRect(670, 30, 191, 671))
+        #self.scrollArea_goals.setGeometry(QtCore.QRect(670, 30, 191, 671))
         self.scrollArea_goals.setWidgetResizable(True)
         self.scrollArea_goals.setObjectName("scrollArea_goals")
+        self.gridLayout.addWidget(self.scrollArea_goals, 1, 1, 4, 1)
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 189, 669))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout.setContentsMargins(0, -1, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.layout_goals_display = QtWidgets.QVBoxLayout()
         self.layout_goals_display.setObjectName("layout_goals_display")
@@ -50,11 +56,12 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         
         # Home Score         
         self.horizontalLayoutWidget_4 = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(10, 0, 151, 61))
+        #self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(10, 0, 151, 61))
         self.horizontalLayoutWidget_4.setObjectName("horizontalLayoutWidget_4")
         self.horizontalLayout_home = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_4)
         self.horizontalLayout_home.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_home.setObjectName("horizontalLayout_home")
+        self.gridLayout.addLayout(self.horizontalLayout_home, 0, 0, 2, 1)
         self.label_home_team_name = QtWidgets.QLabel(self.horizontalLayoutWidget_4)
         self.label_home_team_name.setObjectName("label_home_team_name")
         self.horizontalLayout_home.addWidget(self.label_home_team_name)
@@ -64,11 +71,15 @@ class Boxscore_Window(QtWidgets.QMainWindow):
                
         # Away Score        
         self.horizontalLayoutWidget_3 = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(10, 380, 171, 61))
+        #self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(10, 380, 171, 61))
         self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
         self.horizontalLayout_away = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout_away.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_away.setStretch(0, 1)
+        self.horizontalLayout_away.setStretch(1, 1)
+        self.horizontalLayout_away.setStretch(2, 8)
         self.horizontalLayout_away.setObjectName("horizontalLayout_away")
+        self.gridLayout.addLayout(self.horizontalLayout_away, 3, 0, 1, 1)
         self.label_away_team_name = QtWidgets.QLabel(self.horizontalLayoutWidget_3)
         self.label_away_team_name.setObjectName("label_away_team_name")
         self.horizontalLayout_away.addWidget(self.label_away_team_name)
@@ -78,11 +89,11 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         
         # Home Team Stats        
         self.scrollArea_home_team_stats = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea_home_team_stats.setGeometry(QtCore.QRect(160, 0, 501, 61))
+        #self.scrollArea_home_team_stats.setGeometry(QtCore.QRect(160, 0, 501, 61))
         self.scrollArea_home_team_stats.setWidgetResizable(True)
         self.scrollArea_home_team_stats.setObjectName("scrollArea_home_team_stats")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 499, 59))
+        #self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 499, 59))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -94,11 +105,11 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         
         # Away Team Stats      
         self.scrollArea_away_team_stats = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea_away_team_stats.setGeometry(QtCore.QRect(180, 380, 481, 61))
+        #self.scrollArea_away_team_stats.setGeometry(QtCore.QRect(180, 380, 481, 61))
         self.scrollArea_away_team_stats.setWidgetResizable(True)
         self.scrollArea_away_team_stats.setObjectName("scrollArea_away_team_stats")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 479, 59))
+        #self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 479, 59))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents_3)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -106,6 +117,15 @@ class Boxscore_Window(QtWidgets.QMainWindow):
         self.layout_away_team_stats.setObjectName("layout_away_team_stats")
         self.horizontalLayout_2.addLayout(self.layout_away_team_stats)
         self.scrollArea_away_team_stats.setWidget(self.scrollAreaWidgetContents_3)
+        self.gridLayout.addWidget(self.table_away_stats, 4, 0, 1, 1)
+        self.gridLayout.setColumnStretch(0, 75)
+        self.gridLayout.setColumnStretch(1, 25)
+        self.gridLayout.setRowStretch(0, 5)
+        self.gridLayout.setRowStretch(1, 5)
+        self.gridLayout.setRowStretch(2, 40)
+        self.gridLayout.setRowStretch(3, 5)
+        self.gridLayout.setRowStretch(4, 40)
+        
         
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)

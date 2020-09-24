@@ -21,20 +21,24 @@ class Player_Window(QtWidgets.QMainWindow):
         
     def setupUi(self):
         self.setObjectName("MainWindow")
-        self.resize(590, 607)
+        self.resize(500, 600)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName("gridLayout")
         
         self.label_career_stats = QtWidgets.QLabel(self.centralwidget)
-        self.label_career_stats.setGeometry(QtCore.QRect(10, 110, 81, 16))
+        #self.label_career_stats.setGeometry(QtCore.QRect(10, 110, 81, 16))
         self.label_career_stats.setObjectName("label_career_stats")
+        self.gridLayout.addWidget(self.label_career_stats, 1, 0, 1, 1)
         
         # Create the career stats table and set the model to be able to read a pandas dataframe
         self.table_career_stats = CustomTable(self.centralwidget)
-        self.table_career_stats.setGeometry(QtCore.QRect(10, 130, 571, 201))
+        #self.table_career_stats.setGeometry(QtCore.QRect(10, 130, 571, 201))
         self.table_career_stats.setObjectName("table_career_stats")
         self.player_career_data_model = DataFrameModel(self.player_career_data)
         self.table_career_stats.setModel(self.player_career_data_model)
+        self.gridLayout.addWidget(self.table_career_stats, 2, 0, 1, 2)
         
         # Player information
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -60,6 +64,7 @@ class Player_Window(QtWidgets.QMainWindow):
         self.label_player_birthplace = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.label_player_birthplace.setObjectName("label_player_birthplace")
         self.verticalLayout.addWidget(self.label_player_birthplace)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 1, 1, 1)
         
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 0, 331, 111))
@@ -80,17 +85,20 @@ class Player_Window(QtWidgets.QMainWindow):
         self.label_player_position = QtWidgets.QLabel(self.verticalLayoutWidget_2)
         self.label_player_position.setObjectName("label_player_position")
         self.verticalLayout_2.addWidget(self.label_player_position)
+        self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
 
         # Game Log
         self.label_game_log = QtWidgets.QLabel(self.centralwidget)
-        self.label_game_log.setGeometry(QtCore.QRect(10, 340, 51, 16))
+        #self.label_game_log.setGeometry(QtCore.QRect(10, 340, 51, 16))
         self.label_game_log.setObjectName("label_game_log")
+        self.gridLayout.addWidget(self.label_game_log, 3, 0, 1, 1)
         
         self.table_game_log = CustomTable(self.centralwidget)
-        self.table_game_log.setGeometry(QtCore.QRect(10, 360, 571, 201))
+        #self.table_game_log.setGeometry(QtCore.QRect(10, 360, 571, 201))
         self.table_game_log.setObjectName("table_game_log")
         self.game_log_model = DataFrameModel(self.game_log)
         self.table_game_log.setModel(self.game_log_model)
+        self.gridLayout.addWidget(self.table_game_log, 4, 0, 1, 2)
 
         # Menu bar
         self.setCentralWidget(self.centralwidget)
