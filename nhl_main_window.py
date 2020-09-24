@@ -28,7 +28,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         #self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         #self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.gamesLayout = QtWidgets.QHBoxLayout()        
-        self.gamesLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        #self.gamesLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.gamesLayout.setContentsMargins(5, 5, 5, 5)
         self.gamesLayout.setObjectName("gamesLayout")
         self.label_games = QtWidgets.QLabel(self.centralwidget)
@@ -51,7 +51,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         
         self.table_player_stats = CustomTable(self.centralwidget)
         self.table_player_stats.setObjectName("table_player_stats")
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.table_player_stats.sizePolicy().hasHeightForWidth())
@@ -59,11 +59,11 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_3.addWidget(self.table_player_stats, 1, 0, 4, 1)
                 
         self.btn_more_player_info = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_more_player_info.sizePolicy().hasHeightForWidth())
-        self.btn_more_player_info.setSizePolicy(sizePolicy)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        #sizePolicy.setHeightForWidth(self.btn_more_player_info.sizePolicy().hasHeightForWidth())
+        #self.btn_more_player_info.setSizePolicy(sizePolicy)
         self.btn_more_player_info.setObjectName("btn_more_player_info")
         self.gridLayout_3.addWidget(self.btn_more_player_info, 3, 1, 1, 1)
                 
@@ -97,7 +97,7 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_2.addWidget(self.label_goalie_stats, 0, 0, 1, 1)
         
         self.table_goalie_stats = CustomTable(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.table_goalie_stats.sizePolicy().hasHeightForWidth())
@@ -110,11 +110,11 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_2.addWidget(self.btn_update_goalie_stats, 0, 1, 1, 1)
                 
         self.btn_more_goalie_info = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btn_more_goalie_info.sizePolicy().hasHeightForWidth())
-        self.btn_more_goalie_info.setSizePolicy(sizePolicy)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        #sizePolicy.setHeightForWidth(self.btn_more_goalie_info.sizePolicy().hasHeightForWidth())
+        #self.btn_more_goalie_info.setSizePolicy(sizePolicy)
         self.btn_more_goalie_info.setObjectName("btn_more_goalie_info")
         self.gridLayout_2.addWidget(self.btn_more_goalie_info, 3, 1, 1, 1)
         
@@ -186,10 +186,10 @@ class NHL_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout.addWidget(self.btn_update_standings, 0, 1, 1, 1)
         self.gridLayout_4.addLayout(self.gridLayout, 3, 0, 1, 1)
         
-        self.gridLayout_4.setRowMinimumHeight(0, 20)
-        self.gridLayout_4.setRowMinimumHeight(1, 310)
-        self.gridLayout_4.setRowMinimumHeight(2, 310)
-        self.gridLayout_4.setRowMinimumHeight(3, 310)
+        #self.gridLayout_4.setRowMinimumHeight(0, 20)
+        #self.gridLayout_4.setRowMinimumHeight(1, 310)
+        #self.gridLayout_4.setRowMinimumHeight(2, 310)
+        #self.gridLayout_4.setRowMinimumHeight(3, 310)
                                             
         # Menu bar
         self.setCentralWidget(self.centralwidget)
