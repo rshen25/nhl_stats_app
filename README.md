@@ -21,7 +21,7 @@ The applet works by using the <a href=https://requests.readthedocs.io/en/master/
 
 You can view the boxscores of the current NHL games for the day by clicking on the top buttons.
 It will display the score, player stats, and team stats if it is in progress.
-<img src="https://github.com/rshen25/nhl_stats_app/blob/master/res/mainWindow2_boxscore_highlight.PNG">
+<img src="https://github.com/rshen25/nhl_stats_app/blob/master/res/mainWindow2_boxscore_highlight.png">
 <img src="https://github.com/rshen25/nhl_stats_app/blob/master/res/boxscore.PNG" height="400" width="400"> 
 
 You can view more detailed player stats by clicking on a player in the player stats table or goalie stats table
